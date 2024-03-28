@@ -1,7 +1,5 @@
 <p align="center"><h1>小磊的个人知识库</h1></p>
 
-------
-
 ![github](https://badgen.net/badge/github/1.0.0/?icon=github)
 
 <p align="center"><h3>昨天是段历史</h3></p>
