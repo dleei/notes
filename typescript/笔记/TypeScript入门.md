@@ -171,7 +171,7 @@ TypeScript 依赖 JavaScript 生态，需要用到很多外部模块。但是，
 
 ## 起步安装
 
-运行`ts`需要有`node`环境,自行安装
+tsc 是一个 npm 模块，使用下面的命令安装（必须先安装 node环境）。
 
 ```shell
 npm i typescript -g
@@ -179,25 +179,102 @@ npm i typescript -g
 ## yarn add typescript -g
 ```
 
+TypeScript 官方提供的编译器叫做 tsc，可以将 TypeScript 脚本编译成 JavaScript 脚本。本机想要编译 TypeScript 代码，必须安装 tsc。
+
+根据约定，TypeScript 脚本文件使用`.ts`后缀名，JavaScript 脚本文件使用`.js`后缀名。tsc 的作用就是把`.ts`脚本转变成`.js`脚本。
+
 检测是否安装成功
 
-```
+```bash
+# 或者 tsc --version
 tsc -v
+Version 5.1.6
 ```
 
-简单认识一下
+上面命令中，`-v`或`--version`参数可以输出当前安装的 tsc 版本
 
-```ts
- // index.ts
+安装 tsc 之后，就可以编译 TypeScript 脚本了。
 
-const name:string = "小磊"
-打印一下结果
-console.log(name)
+`tsc`命令后面，加上 TypeScript 脚本文件，就可以将其编译成 JavaScript 脚本。
 
-使用 tsc 调试输出结果
-tsc -w  index.ts // -w 为 --watch 监听这个文件的变化, 运行后会输出一个 index.js 文件
-再新开一个终端, 使用 node 或是 nodemon 运行这个 index.js 文件   // 小磊
+```bash
+tsc app.ts
 ```
+
+上面命令会在当前目录下，生成一个`app.js`脚本文件，这个脚本就完全是编译后生成的 JavaScript 代码。
+
+`tsc`命令也可以一次编译多个 TypeScript 脚本。
+
+```bash
+tsc file1.ts file2.ts file3.ts
+```
+
+上面命令会在当前目录生成三个 JavaScript 脚本文件`file1.js`、`file2.js`、`file3.js`。
+
+tsc 有很多参数，可以调整编译行为。
+
+**（1）--outFile**
+
+如果想将多个 TypeScript 脚本编译成一个 JavaScript 文件，使用`--outFile`参数。
+
+```bash
+tsc file1.ts file2.ts --outFile app.js
+```
+
+上面命令将`file1.ts`和`file2.ts`两个脚本编译成一个 JavaScript 文件`app.js`。
+
+**（2）--outDir**
+
+编译结果默认都保存在当前目录，`--outDir`参数可以指定保存到其他目录。
+
+```bash
+tsc app.ts --outDir dist上面命令会在`dist`子目录下生成`app.js`。
+```
+
+**（3）--target**
+
+为了保证编译结果能在各种 JavaScript 引擎运行，tsc 默认会将 TypeScript 代码编译成很低版本的 JavaScript，即3.0版本（以`es3`表示）。这通常不是我们想要的结果。
+
+这时可以使用`--target`参数，指定编译后的 JavaScript 版本。建议使用`es2015`，或者更新版本。
+
+```bash
+tsc --target es2015 app.ts
+```
+
+**(4)   --watch**
+
+在 tsc 后加上 -w 为 --watch的简写形式它会持续监听这个文件的变化
+
+```bash
+tsc -w  index.ts 
+再新开一个终端, 使用 node 或是 nodemon 运行这个 index.js 文件   
+```
+
+**(6)   --noEmitOnError**
+
+如果希望一旦报错就停止编译，不生成编译产物，可以使用`--noEmitOnError`参数
+
+```bash
+ tsc --noEmitOnError app.ts
+```
+
+上面命令在报错后，就不会生成`app.js`
+
+**(7)   --noEmit**
+
+只检查类型是否正确，不生成 JavaScript 文件。
+
+```bash
+ tsc --noEmit app.ts
+```
+
+上面命令只检查是否有编译错误，不会生成`app.js`。
+
+## tsconfig.json
+
+TypeScript 允许将`tsc`的编译参数，写在配置文件`tsconfig.json`。只要当前目录有这个文件，`tsc`就会自动读取，所以运行时可以不写参数
+
+有了这个配置文件，编译时直接调用`tsc`命令就可以了
 
 生成 `tsconfig.json` 配置文件
 
@@ -211,20 +288,140 @@ tsc --init // 会在根目录下生成一个 tsconfig.js 的配置文件
 
 `tsconfig.json`文件主要供`tsc`编译器使用，它的命令行参数`--project`或`-p`可以指定`tsconfig.json`的位置（目录或文件皆可）。
 
-```ts
+```bash
 tsc -p ./dir
 ```
 
+```json
+"compilerOptions": {
+  "incremental": true, // TS编译器在第一次编译之后会生成一个存储编译信息的文件，第二次编译会在第一次的基础上进行增量编译，可以提高编译的速度
+  "tsBuildInfoFile": "./buildFile", // 增量编译文件的存储位置
+  "diagnostics": true, // 打印诊断信息 
+  "target": "ES5", // 目标语言的版本
+  "module": "CommonJS", // 生成代码的模板标准
+  "outFile": "./app.js", // 将多个相互依赖的文件生成一个文件，可以用在AMD模块中，即开启时应设置"module": "AMD",
+  "lib": ["DOM", "ES2015", "ScriptHost", "ES2019.Array"], // TS需要引用的库，即声明文件，es5 默认引用dom、es5、scripthost,如需要使用es的高级版本特性，通常都需要配置，如es8的数组新特性需要引入"ES2019.Array",
+  "allowJS": true, // 允许编译器编译JS，JSX文件
+  "checkJs": true, // 允许在JS文件中报错，通常与allowJS一起使用
+  "outDir": "./dist", // 指定输出目录
+  "rootDir": "./", // 指定输出文件目录(用于输出)，用于控制输出目录结构
+  "declaration": true, // 生成声明文件，开启后会自动生成声明文件
+  "declarationDir": "./file", // 指定生成声明文件存放目录
+  "emitDeclarationOnly": true, // 只生成声明文件，而不会生成js文件
+  "sourceMap": true, // 生成目标文件的sourceMap文件
+  "inlineSourceMap": true, // 生成目标文件的inline SourceMap，inline SourceMap会包含在生成的js文件中
+  "declarationMap": true, // 为声明文件生成sourceMap
+  "typeRoots": [], // 声明文件目录，默认时node_modules/@types
+  "types": [], // 加载的声明文件包
+  "removeComments":true, // 删除注释 
+  "noEmit": true, // 不输出文件,即编译后不会生成任何js文件
+  "noEmitOnError": true, // 发送错误时不输出任何文件
+  "noEmitHelpers": true, // 不生成helper函数，减小体积，需要额外安装，常配合importHelpers一起使用
+  "importHelpers": true, // 通过tslib引入helper函数，文件必须是模块
+  "downlevelIteration": true, // 降级遍历器实现，如果目标源是es3/5，那么遍历器会有降级的实现
+  "strict": true, // 开启所有严格的类型检查
+  "alwaysStrict": true, // 在代码中注入'use strict'
+  "noImplicitAny": true, // 不允许隐式的any类型
+  "strictNullChecks": true, // 不允许把null、undefined赋值给其他类型的变量
+  "strictFunctionTypes": true, // 不允许函数参数双向协变
+  "strictPropertyInitialization": true, // 类的实例属性必须初始化
+  "strictBindCallApply": true, // 严格的bind/call/apply检查
+  "noImplicitThis": true, // 不允许this有隐式的any类型
+  "noUnusedLocals": true, // 检查只声明、未使用的局部变量(只提示不报错)
+  "noUnusedParameters": true, // 检查未使用的函数参数(只提示不报错)
+  "noFallthroughCasesInSwitch": true, // 防止switch语句贯穿(即如果没有break语句后面不会执行)
+  "noImplicitReturns": true, //每个分支都会有返回值
+  "esModuleInterop": true, // 允许export=导出，由import from 导入
+  "allowUmdGlobalAccess": true, // 允许在模块中全局变量的方式访问umd模块
+  "moduleResolution": "node", // 模块解析策略，ts默认用node的解析策略，即相对的方式导入
+  "baseUrl": "./", // 解析非相对模块的基地址，默认是当前目录
+  "paths": { // 路径映射，相对于baseUrl
+    // 如使用jq时不想使用默认版本，而需要手动指定版本，可进行如下配置
+    "jquery": ["node_modules/jquery/dist/jquery.min.js"]
+  },
+  "rootDirs": ["src","out"], // 将多个目录放在一个虚拟目录下，用于运行时，即编译后引入文件的位置可能发生变化，这也设置可以虚拟src和out在同一个目录下，不用再去改变路径也不会报错
+  "listEmittedFiles": true, // 打印输出文件
+  "listFiles": true// 打印编译的文件(包括引用的声明文件)
+}
+ 
+// 指定一个匹配列表（属于自动指定该路径下的所有ts相关文件）
+"include": [
+   "src/**/*"
+],
+// 指定一个排除列表（include的反向操作）
+ "exclude": [
+   "demo.ts"
+],
+// 指定哪些文件使用该配置（属于手动一个个指定文件）
+ "files": [
+   "demo.ts"
+]
+```
 
+#### 常用属性
+
+1.include
+指定编译文件默认是编译当前目录下所有的ts文件
+
+2.exclude
+指定排除的文件
+
+3.target
+指定编译js 的版本例如es5  es6
+
+4.allowJS
+是否允许编译js文件
+
+5.removeComments
+是否在编译过程中删除文件中的注释
+
+6.rootDir
+编译文件的目录
+
+7.outDir
+输出的目录
+
+8.sourceMap
+代码源文件
+
+9.strict
+严格模式
+
+10.module
+默认common.js  可选es6模式 amd  umd 等
+
+## 类型声明
+
+`TypeScript` 代码最明显的特征，就是为 JavaScript 变量加上了类型声明。
+
+```ts
+let name:string = 'ikun'
+```
+
+上面示例中，变量`name`的后面使用冒号，声明了它的类型为`string`。
+
+类型声明的写法，一律为在标识符后面添加“冒号 + 类型”。函数参数和返回值，也是这样来声明类型。
+
+```ts
+// 例一：
+function addCount（num:number）:number {
+return num++
+}
+// 例二:
+const toString = (num:number):string => {
+    return String(num)
+}
+```
+
+示例一中的普通函数`addCount`将入参的类型限定为数字类型并加一后返回,同时返回值的类型也是数字类型
+
+示例二的箭头函数中，函数`toString()`的参数`num`的类型是`number`。参数列表的圆括号后面，声明了返回值的类型是`string`
 
 ### 字符串类型
 
-在变量的后面使用：加类型定义限定变量的类型
-
 ```ts
-let a: string = '123'
 //普通声明
- 
+ let a: string = '123'
 //也可以使用es6的字符串模板
 let str: string = `dddd${a}`
 ```
@@ -307,10 +504,14 @@ TIPS 注意：
 1.没有强制限定哪种类型，随时切换类型都可以 我们可以对 `any `进行任何操作，不需要检查类型
 
 ```ts
-let anys:any = 123
-anys = '123'
-anys = true
+let anys:any = 123  // 正确
+anys = '123' // 正确
+anys = true  // 正确
 ```
+
+上面示例中，变量`anys`的类型是`any`，就可以被赋值为任意类型的值
+
+变量类型一旦设为`any`，TypeScript 实际上会关闭这个变量的类型检查。即使有明显的类型错误，只要句法正确，都不会报错
 
 2.声明变量的时候没有指定任意类型默认为`any`
 
@@ -322,58 +523,249 @@ anys = true
 
 3.弊端如果使用any 就失去了TS类型检测的作用
 
-4.TypeScript 3.0中引入的 unknown 类型也被认为是 top type ，但它更安全。与 any 一样，所有类型都可以分配给unknown
-
-unknow  unknow类型比any更加严格当你要使用any 的时候可以尝试使用unknow
-
 ```ts
-//unknown 可以定义任何类型的值
-let value: unknown;
-value = true;             // OK
-value = 42;               // OK
-value = "Hello World";    // OK
-value = [];               // OK
-value = {};               // OK
-value = null;             // OK
-value = undefined;        // OK
-value = Symbol("type");   // OK
+let x:any = 'hello';
+
+x(1) // 不报错
+x.foo = 100; // 不报错
 ```
 
-区别二
+上面示例中，变量`x`的值是一个字符串，但是把它当作函数调用，或者当作对象读取任意属性，TypeScript 编译时都不报错。原因就是`x`的类型是`any`，TypeScript 不对其进行类型检查
+
+由于这个原因，应该尽量避免使用`any`类型，否则就失去了使用 TypeScript 的意义
+
+实际开发中，`any`类型主要适用以下两个场合
+
+（1）出于特殊原因，需要关闭某些变量的类型检查，就可以把该变量的类型设为`any`
+
+（2）为了适配以前老的 JavaScript 项目，让代码快速迁移到 TypeScript，可以把变量类型设为`any`。有些年代很久的大型 JavaScript 项目，尤其是别人的代码，很难为每一行适配正确的类型，这时你为那些类型复杂的变量加上`any`，TypeScript 编译时就不会报错
+
+总之，TypeScript 认为，只要开发者使用了`any`类型，就表示开发者想要自己来处理这些代码，所以就不对`any`类型进行任何限制，怎么使用都可以
+
+从集合论的角度看，`any`类型可以看成是所有其他类型的全集，包含了一切可能的类型。TypeScript 将这种类型称为“顶层类型”（top type），意为涵盖了所有下层
+
+### 类型推论问题
+
+对于开发者没有指定类型、TypeScript 必须自己推断类型的那些变量，如果无法推断出类型，TypeScript 就会认为该变量的类型是`any`
 
 ```ts
-//这样写会报错unknow类型不能作为子类型只能作为父类型 any可以作为父类型和子类型
-//unknown类型不能赋值给其他类型
-let names:unknown = '123'
-let names2:string = names
+function add(x, y) {
+  return x + y;
+}
 
-//这样就没问题 any类型是可以的
-let names:any = '123'
-let names2:string = names   
-
-//unknown可赋值对象只有unknown 和 any
-let bbb:unknown = '123'
-let aaa:any= '456'
-
-aaa = bbb
+add(1, [1, 2, 3]) // 不报错
 ```
 
-如果是any类型在对象没有这个属性的时候还在获取是不会报错的
+上面示例中，函数`add()`的参数变量`x`和`y`，都没有足够的信息，TypeScript 无法推断出它们的类型，就会认为这两个变量和函数返回值的类型都是`any`。以至于后面就不再对函数`add()`进行类型检查了，怎么用都可以
+
+这显然是很糟糕的情况，所以对于那些类型不明显的变量，一定要显式声明类型，防止被推断为`any`
+
+TypeScript 提供了一个编译选项`noImplicitAny`，打开该选项，只要推断出`any`类型就会报错
+
+```bash
+$ tsc --noImplicitAny app.ts
+```
+
+上面命令使用了`noImplicitAny`编译选项进行编译，这时上面的函数`add()`就会报错。
+
+这里有一个特殊情况，即使打开了`noImplicitAny`，使用`let`和`var`命令声明变量，但不赋值也不指定类型，是不会报错的。
 
 ```ts
-let obj:any = {b:1}
-obj.a
+var x; // 不报错
+let y; // 不报错
 ```
 
-如果是unknow 是不能调用属性和方法
+上面示例中，变量`x`和`y`声明时没有赋值，也没有指定类型，TypeScript 会推断它们的类型为`any`。这时即使打开了`noImplicitAny`，也不会报错
 
 ```ts
-let obj:unknown = {b:1,ccc:():number=>213}
-obj.b
-obj.ccc()
+let x;
+
+x = 123;
+x = { foo: 'hello' };
 ```
 
-object与Object类型的区别
+上面示例中，变量`x`的类型推断为`any`，但是不报错，可以顺利通过编译
+
+由于这个原因，建议使用`let`和`var`声明变量时，如果不赋值，就一定要显式声明类型，否则可能存在安全隐患
+
+`const`命令没有这个问题，因为 JavaScript 语言规定`const`声明变量时，必须同时进行初始化（赋值）
+
+```ts
+const x; // 报错
+```
+
+上面示例中，`const`命令声明的`x`是不能改变值的，声明时必须同时赋值，否则报错，所以它不存在类型推断为`any`的问题
+
+`any`类型除了关闭类型检查，还有一个很大的问题，就是它会“污染”其他变量。它可以赋值给其他任何类型的变量（因为没有类型检查），导致其他变量出错。
+
+```ts
+let x:any = 'hello';
+let y:number;
+
+y = x; // 不报错
+
+y * 123 // 不报错
+y.toFixed() // 不报错
+```
+
+上面示例中，变量`x`的类型是`any`，实际的值是一个字符串。变量`y`的类型是`number`，表示这是一个数值变量，但是它被赋值为`x`，这时并不会报错。然后，变量`y`继续进行各种数值运算，TypeScript 也检查不出错误，问题就这样留到运行时才会暴露
+
+污染其他具有正确类型的变量，把错误留到运行时，这就是不宜使用`any`类型的另一个主要原因
+
+### unknown 类型
+
+为了解决`any`类型“污染”其他变量的问题，TypeScript 3.0 引入了[`unknown`类型](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type)。它与`any`含义相同，表示类型不确定，可能是任意类型，但是它的使用有一些限制，不像`any`那样自由，可以视为严格版的`any`。
+
+`unknown`跟`any`的相似之处，在于所有类型的值都可以分配给`unknown`类型。
+
+```ts
+let x:unknown;
+
+x = true; // 正确
+x = 42; // 正确
+x = 'Hello World'; // 正确
+```
+
+上面示例中，变量`x`的类型是`unknown`，可以赋值为各种类型的值。这与`any`的行为一致。
+
+`unknown`类型跟`any`类型的不同之处在于，它不能直接使用。主要有以下几个限制。
+
+首先，`unknown`类型的变量，不能直接赋值给其他类型的变量（除了`any`类型和`unknown`类型）。
+
+```ts
+let v:unknown = 123;
+
+let v1:boolean = v; // 报错
+let v2:number = v; // 报错
+```
+
+上面示例中，变量`v`是`unknown`类型，赋值给`any`和`unknown`以外类型的变量都会报错，这就避免了污染问题，从而克服了`any`类型的一大缺点。
+
+其次，不能直接调用`unknown`类型变量的方法和属性。
+
+```ts
+let v1:unknown = { foo: 123 };
+v1.foo  // 报错
+
+let v2:unknown = 'hello';
+v2.trim() // 报错
+
+let v3:unknown = (n = 0) => n + 1;
+v3() // 报错
+```
+
+上面示例中，直接调用`unknown`类型变量的属性和方法，或者直接当作函数执行，都会报错。
+
+再次，`unknown`类型变量能够进行的运算是有限的，只能进行比较运算（运算符`==`、`===`、`!=`、`!==`、`||`、`&&`、`?`）、取反运算（运算符`!`）、`typeof`运算符和`instanceof`运算符这几种，其他运算都会报错。
+
+```ts
+let a:unknown = 1;
+
+a + 1 // 报错
+a === 1 // 正确
+```
+
+上面示例中，`unknown`类型的变量`a`进行加法运算会报错，因为这是不允许的运算。但是，进行比较运算就是可以的。
+
+那么，怎么才能使用`unknown`类型变量呢？
+
+答案是只有经过“类型缩小”，`unknown`类型变量才可以使用。所谓“类型缩小”，就是缩小`unknown`变量的类型范围，确保不会出错。
+
+```ts
+let a:unknown = 1;
+
+if (typeof a === 'number') {
+  let r = a + 10; // 正确
+}
+```
+
+上面示例中，`unknown`类型的变量`a`经过`typeof`运算以后，能够确定实际类型是`number`，就能用于加法运算了。这就是“类型缩小”，即将一个不确定的类型缩小为更明确的类型。
+
+下面是另一个例子。
+
+```ts
+let s:unknown = 'hello';
+
+if (typeof s === 'string') {
+  s.length; // 正确
+}
+```
+
+上面示例中，确定变量`s`的类型为字符串以后，才能调用它的`length`属性。
+
+这样设计的目的是，只有明确`unknown`变量的实际类型，才允许使用它，防止像`any`那样可以随意乱用，“污染”其他变量。类型缩小以后再使用，就不会报错。
+
+总之，`unknown`可以看作是更安全的`any`。一般来说，凡是需要设为`any`类型的地方，通常都应该优先考虑设为`unknown`类型。
+
+在集合论上，`unknown`也可以视为所有其他类型（除了`any`）的全集，所以它和`any`一样，也属于 TypeScript 的顶层类型。
+
+### never类型
+
+never类型就像它的英文单词的意思一样，它表示的是一个永远不会发生值的类型，不可能存在的一个类型
+
+可能会出现never类型的一些情况
+
+函数抛出异常
+
+如果一个函数抛出异常，那么它的返回值的类型就是never，因为在函数抛出异常后就会直接中断程序的运行，这意味着程序不会继续执行到函数返回语句的那一步
+
+```ts
+const throwError = (messge:string)=> {
+throw new Error(message)
+}
+```
+
+不会有返回值的函数
+
+如果一个函数为一个死循环函数，比如while的无限死循环函数，那么该循环的类型就会被推断为never类型
+
+```ts
+const loop = () => {
+ while(true) {
+   console.log('hello,my name is jack')
+  }
+}
+```
+
+never 类型属于底层类型会被忽略，任何类型和never类型的联合类型都是其本身
+
+```ts
+type arr = void | number | never  // void | number
+```
+
+never类型与任何类型的交叉类型都是never类型
+
+```ts
+type a1 = number & never // never
+type a2 = string & never // never
+type a3 = boolean & never // never
+```
+
+never 可以赋值给任何类型
+
+由于 never 类型是所有其他类型的子类型，所以可以将 never 赋值给任何其他类型
+
+```ts
+let n:never
+let str:string = n
+let num:number = n
+let b:boolean = n
+...
+```
+
+其他类型不能赋值给never类型
+
+由于never属于底层类型，没有子类型，所以除了never类型本身，任何类型都不能赋值给never类型
+
+```ts
+let n:never
+n = 'ikun' // ❌
+n = 18 // ❌
+n = true // ❌
+...
+```
+
+### object与Object类型的区别
 
 Object类型与js中的原型链相关，原型链的顶端就是Object或者是function，也就意味着所有的原始类型，以及对象类型最终都会指向这个Object
 
@@ -727,6 +1119,20 @@ username = null
 ...
 ```
 
+TypeScript 也可以推断函数的返回值。
+
+```ts
+function toString(num:number) {
+  return String(num);
+}
+```
+
+上面示例中，函数`toString()`没有声明返回值的类型，但是 TypeScript 推断返回的是字符串。正是因为 TypeScript 的类型推断，所以函数返回值的类型通常是省略不写的。
+
+从这里可以看到，TypeScript 的设计思想是，类型声明是可选的，你可以加，也可以不加。即使不加类型声明，依然是有效的 TypeScript 代码，只是这时不能保证 TypeScript 会正确推断出类型。由于这个原因，所有 JavaScript 代码都是合法的 TypeScript 代码。
+
+这样设计还有一个好处，将以前的 JavaScript 项目改为 TypeScript 项目时，你可以逐步地为老代码添加类型，即使有些代码没有添加，也不会无法运行
+
 ### 类型别名
 
 type 关键字，可以给一个类型定义一个名字，多用于复合类型
@@ -824,172 +1230,6 @@ const getLength<T extends Len> = (value:T) => {
 }
 getLength<string>('12564') // 5
 ```
-
-### never类型
-
-never类型就像它的英文单词的意思一样，它表示的是一个永远不会发生值的类型，不可能存在的一个类型
-
-可能会出现never类型的一些情况
-
-函数抛出异常
-
-如果一个函数抛出异常，那么它的返回值的类型就是never，因为在函数抛出异常后就会直接中断程序的运行，这意味着程序不会继续执行到函数返回语句的那一步
-
-```ts
-const throwError = (messge:string)=> {
-throw new Error(message)
-}
-```
-
-不会有返回值的函数
-
-如果一个函数为一个死循环函数，比如while的无限死循环函数，那么该循环的类型就会被推断为never类型
-
-```ts
-const loop = () => {
- while(true) {
-   console.log('hello,my name is jack')
-  }
-}
-```
-
-never 类型属于底层类型会被忽略，任何类型和never类型的联合类型都是其本身
-
-```ts
-type arr = void | number | never  // void | number
-```
-
-never类型与任何类型的交叉类型都是never类型
-
-```ts
-type a1 = number & never // never
-type a2 = string & never // never
-type a3 = boolean & never // never
-```
-
-never 可以赋值给任何类型
-
-由于 never 类型是所有其他类型的子类型，所以可以将 never 赋值给任何其他类型
-
-```ts
-let n:never
-let str:string = n
-let num:number = n
-let b:boolean = n
-...
-```
-
-其他类型不能赋值给never类型
-
-由于never属于底层类型，没有子类型，所以除了never类型本身，任何类型都不能赋值给never类型
-
-```ts
-let n:never
-n = 'ikun' // ❌
-n = 18 // ❌
-n = true // ❌
-...
-```
-
-### tsconfig.json配置文件
-
-```json
-"compilerOptions": {
-  "incremental": true, // TS编译器在第一次编译之后会生成一个存储编译信息的文件，第二次编译会在第一次的基础上进行增量编译，可以提高编译的速度
-  "tsBuildInfoFile": "./buildFile", // 增量编译文件的存储位置
-  "diagnostics": true, // 打印诊断信息 
-  "target": "ES5", // 目标语言的版本
-  "module": "CommonJS", // 生成代码的模板标准
-  "outFile": "./app.js", // 将多个相互依赖的文件生成一个文件，可以用在AMD模块中，即开启时应设置"module": "AMD",
-  "lib": ["DOM", "ES2015", "ScriptHost", "ES2019.Array"], // TS需要引用的库，即声明文件，es5 默认引用dom、es5、scripthost,如需要使用es的高级版本特性，通常都需要配置，如es8的数组新特性需要引入"ES2019.Array",
-  "allowJS": true, // 允许编译器编译JS，JSX文件
-  "checkJs": true, // 允许在JS文件中报错，通常与allowJS一起使用
-  "outDir": "./dist", // 指定输出目录
-  "rootDir": "./", // 指定输出文件目录(用于输出)，用于控制输出目录结构
-  "declaration": true, // 生成声明文件，开启后会自动生成声明文件
-  "declarationDir": "./file", // 指定生成声明文件存放目录
-  "emitDeclarationOnly": true, // 只生成声明文件，而不会生成js文件
-  "sourceMap": true, // 生成目标文件的sourceMap文件
-  "inlineSourceMap": true, // 生成目标文件的inline SourceMap，inline SourceMap会包含在生成的js文件中
-  "declarationMap": true, // 为声明文件生成sourceMap
-  "typeRoots": [], // 声明文件目录，默认时node_modules/@types
-  "types": [], // 加载的声明文件包
-  "removeComments":true, // 删除注释 
-  "noEmit": true, // 不输出文件,即编译后不会生成任何js文件
-  "noEmitOnError": true, // 发送错误时不输出任何文件
-  "noEmitHelpers": true, // 不生成helper函数，减小体积，需要额外安装，常配合importHelpers一起使用
-  "importHelpers": true, // 通过tslib引入helper函数，文件必须是模块
-  "downlevelIteration": true, // 降级遍历器实现，如果目标源是es3/5，那么遍历器会有降级的实现
-  "strict": true, // 开启所有严格的类型检查
-  "alwaysStrict": true, // 在代码中注入'use strict'
-  "noImplicitAny": true, // 不允许隐式的any类型
-  "strictNullChecks": true, // 不允许把null、undefined赋值给其他类型的变量
-  "strictFunctionTypes": true, // 不允许函数参数双向协变
-  "strictPropertyInitialization": true, // 类的实例属性必须初始化
-  "strictBindCallApply": true, // 严格的bind/call/apply检查
-  "noImplicitThis": true, // 不允许this有隐式的any类型
-  "noUnusedLocals": true, // 检查只声明、未使用的局部变量(只提示不报错)
-  "noUnusedParameters": true, // 检查未使用的函数参数(只提示不报错)
-  "noFallthroughCasesInSwitch": true, // 防止switch语句贯穿(即如果没有break语句后面不会执行)
-  "noImplicitReturns": true, //每个分支都会有返回值
-  "esModuleInterop": true, // 允许export=导出，由import from 导入
-  "allowUmdGlobalAccess": true, // 允许在模块中全局变量的方式访问umd模块
-  "moduleResolution": "node", // 模块解析策略，ts默认用node的解析策略，即相对的方式导入
-  "baseUrl": "./", // 解析非相对模块的基地址，默认是当前目录
-  "paths": { // 路径映射，相对于baseUrl
-    // 如使用jq时不想使用默认版本，而需要手动指定版本，可进行如下配置
-    "jquery": ["node_modules/jquery/dist/jquery.min.js"]
-  },
-  "rootDirs": ["src","out"], // 将多个目录放在一个虚拟目录下，用于运行时，即编译后引入文件的位置可能发生变化，这也设置可以虚拟src和out在同一个目录下，不用再去改变路径也不会报错
-  "listEmittedFiles": true, // 打印输出文件
-  "listFiles": true// 打印编译的文件(包括引用的声明文件)
-}
- 
-// 指定一个匹配列表（属于自动指定该路径下的所有ts相关文件）
-"include": [
-   "src/**/*"
-],
-// 指定一个排除列表（include的反向操作）
- "exclude": [
-   "demo.ts"
-],
-// 指定哪些文件使用该配置（属于手动一个个指定文件）
- "files": [
-   "demo.ts"
-]
-```
-
-#### 常用属性
-
-1.include
-指定编译文件默认是编译当前目录下所有的ts文件
-
-2.exclude
-指定排除的文件
-
-3.target
-指定编译js 的版本例如es5  es6
-
-4.allowJS
-是否允许编译js文件
-
-5.removeComments
-是否在编译过程中删除文件中的注释
-
-6.rootDir
-编译文件的目录
-
-7.outDir
-输出的目录
-
-8.sourceMap
-代码源文件
-
-9.strict
-严格模式
-
-10.module
-默认common.js  可选es6模式 amd  umd 等
 
 ### 三斜线指令
 
