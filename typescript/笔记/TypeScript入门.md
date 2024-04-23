@@ -292,6 +292,8 @@ tsc --init // 会在根目录下生成一个 tsconfig.js 的配置文件
 tsc -p ./dir
 ```
 
+
+
 ```json
 "compilerOptions": {
   "incremental": true, // TS编译器在第一次编译之后会生成一个存储编译信息的文件，第二次编译会在第一次的基础上进行增量编译，可以提高编译的速度
@@ -440,6 +442,28 @@ let binary: number = 0b1010;//二进制
 let octal: number = 0o744;//八进制s
 ```
 
+### bigint 类型
+
+bigint 类型包含所有的大整数。
+
+```ts
+const x:bigint = 123n;
+const y:bigint = 0xffffn;
+```
+
+上面示例中，变量`x`和`y`就属于 bigint 类型。
+
+bigint 与 number 类型不兼容。
+
+```ts
+const x:bigint = 123; // 报错
+const y:bigint = 3.14; // 报错
+```
+
+上面示例中，`bigint`类型赋值为整数和小数，都会报错
+
+注意，bigint 类型是 ES2020 标准引入的。如果使用这个类型，TypeScript 编译的目标 JavaScript 版本不能低于 ES2020（即编译参数`target`不低于`es2020`）
+
 ### 布尔类型
 
 ```ts
@@ -459,14 +483,92 @@ function voidFn(): void {
 
 `void` 类型的用法，主要是用在我们**不希望**调用者关心函数返回值的情况下，比如通常的**异步回调函数**
 
-### null和undefined类型
+### null 和 undefined 类型
+
+undefined 和 null 是两种独立类型，它们各自都只有一个值
+
+undefined 类型只包含一个值`undefined`，表示未定义（即还未给出定义，以后可能会有定义）
 
 ```ts
-let u: undefined = undefined;//定义undefined
-let n: null = null;//定义null
+let x:undefined = undefined;
 ```
 
-**void 和 undefined 和 null 最大的区别**
+上面示例中，变量`x`就属于 undefined 类型。两个`undefined`里面，第一个是类型，第二个是值
+
+null 类型也只包含一个值`null`，表示为空（即此处没有值）
+
+```ts
+const x:null = null;
+```
+
+上面示例中，变量`x`就属于 null 类型
+
+### undefined 和 null 的特殊性
+
+`undefined`和`null`既是值，又是类型 
+
+作为值，它们有一个特殊的地方：任何其他类型的变量都可以赋值为`undefined`或`null`
+
+```ts
+let age:number = 24;
+
+age = null;      // 正确
+age = undefined; // 正确
+```
+
+```ts
+const obj:object = undefined;
+obj.toString() // 编译不报错，运行就报错
+```
+
+上面示例中，变量`obj`等于`undefined`，编译不会报错。但是，实际执行时，调用`obj.toString()`就报错了，因为`undefined`不是对象，没有这个方法。
+
+为了避免这种情况，及早发现错误，TypeScript 提供了一个编译选项`strictNullChecks`。只要打开这个选项，`undefined`和`null`就不能赋值给其他类型的变量（除了`any`类型和`unknown`类型）。
+
+下面是 tsc 命令打开这个编译选项的例子。
+
+```ts
+// tsc --strictNullChecks app.ts
+
+let age:number = 24;
+
+age = null;      // 报错
+age = undefined; // 报错
+```
+
+上面示例中，打开`--strictNullChecks`以后，`number`类型的变量`age`就不能赋值为`undefined`和`null`。
+
+这个选项在配置文件`tsconfig.json`的写法如下。
+
+```ts
+{
+  "compilerOptions": {
+    "strictNullChecks": true
+    // ...
+  }
+}
+```
+
+打开`strictNullChecks`以后，`undefined`和`null`这两种值也不能互相赋值了。
+
+```ts
+// 打开 strictNullChecks
+
+let x:undefined = null; // 报错
+let y:null = undefined; // 报错
+```
+
+上面示例中，`undefined`类型的变量赋值为`null`，或者`null`类型的变量赋值为`undefined`，都会报错。
+
+总之，打开`strictNullChecks`以后，`undefined`和`null`只能赋值给自身，或者`any`类型和`unknown`类型的变量。
+
+```ts
+let x:any     = undefined;
+let y:unknown = null;
+```
+
+### **void 和 undefined 和 null 最大的区别**
+
 与 void 的区别是，`undefined` 和 `null` 是所有类型的子类型。也就是说 `undefined` 类型的变量，可以赋值给 `string` 类型的变量：
 
 ```ts
@@ -765,13 +867,91 @@ n = true // ❌
 ...
 ```
 
+### 包装对象类型
+
+#### 概念
+
+JavaScript 的8种类型之中，`undefined`和`null`其实是两个特殊值，`object`属于复合类型，剩下的五种属于原始类型（primitive value），代表最基本的、不可再分的值。
+
+- boolean
+- string
+- number
+- bigint
+- symbol
+
+上面这五种原始类型的值，都有对应的包装对象（wrapper object）。所谓“包装对象”，指的是这些值在需要时，会自动产生的对象。
+
+```ts
+'hello'.charAt(1) // 'e'
+```
+
+上面示例中，字符串`hello`执行了`charAt()`方法。但是，在 JavaScript 语言中，只有对象才有方法，原始类型的值本身没有方法。这行代码之所以可以运行，就是因为在调用方法时，字符串会自动转为包装对象，`charAt()`方法其实是定义在包装对象上。
+
+五种包装对象之中，symbol 类型和 bigint 类型无法直接获取它们的包装对象（即`Symbol()`和`BigInt()`不能作为构造函数使用），但是剩下三种可以。
+
+- `Boolean()`
+- `String()`
+- `Number()`
+
+以上三个构造函数，执行后可以直接获取某个原始类型值的包装对象。
+
+```ts
+const s = new String('hello');
+typeof s   // 'object'
+s.charAt(1)   // 'e'
+```
+
+上面示例中，`s`就是字符串`hello`的包装对象，`typeof`运算符返回`object`，不是`string`，但是本质上它还是字符串，可以使用所有的字符串方法。
+
+注意，`String()`只有当作构造函数使用时（即带有`new`命令调用），才会返回包装对象。如果当作普通函数使用（不带有`new`命令），返回就是一个普通字符串。其他两个构造函数`Number()`和`Boolean()`也是如此。
+
+### 字面量类型
+
+字面量模式的对象类型是无法进行修改赋值操作的
+
+```ts
+let a:{ }  // 可以理解为 new Object，创建一个新对象支持所有的类型
+let a:{ } = 123
+let a:{ } = '123'
+let a:{ } = []
+let a:{ } = {name:张三}
+```
+
 ### object与Object类型的区别
 
-Object类型与js中的原型链相关，原型链的顶端就是Object或者是function，也就意味着所有的原始类型，以及对象类型最终都会指向这个Object
+大写的Object类型与js中的原型链相关，原型链的顶端就是Object或者是function，也就意味着所有的原始类型，以及对象类型最终都会指向这个Object
 
 在ts中的Object类型就表示包含所有的类型
 
-object类型表示非原始类型，常用于泛型约束
+事实上，除了`undefined`和`null`这两个值不能转为对象，其他任何值都可以赋值给`Object`类型。
+
+```ts
+let obj:Object;
+
+obj = undefined; // 报错
+obj = null; // 报错
+```
+
+上面示例中，`undefined`和`null`赋值给`Object`类型，就会报错。
+
+另外，空对象`{}`是`Object`类型的简写形式，所以使用`Object`时常常用空对象代替。
+
+```ts
+let obj:{};
+ 
+obj = true;
+obj = 'hi';
+obj = 1;
+obj = { foo: 123 };
+obj = [1, 2];
+obj = (a:number) => a + 1;
+```
+
+上面示例中，变量`obj`的类型是空对象`{}`，就代表`Object`类型。
+
+显然，无所不包的`Object`类型既不符合直觉，也不方便使用。
+
+小写的object类型表示非原始类型，即可以用字面量表示的对象，只包含对象、数组和函数，常用于泛型约束
 
 ```ts
 let a1:object = 1  // 错误 属于原始类型
@@ -782,17 +962,9 @@ let a5:object = {}  // 正确  非原始类型
 let a6:object = ()=> 123  // 正确  非原始类型
 ```
 
-### `{ }`字面量模式
+大多数时候，我们使用对象类型，只希望包含真正的对象，不希望包含原始类型。所以，建议总是使用小写类型`object`，不使用大写类型`Object`。
 
-```ts
-let a:{ }  // 可以理解为 new Object，创建一个新对象支持所有的类型
-let a:{ } = 123
-let a:{ } = '123'
-let a:{ } = []
-let a:{ } = {name:张三}
-```
-
-字面量模式的对象类型是无法进行修改赋值操作的
+注意，无论是大写的`Object`类型，还是小写的`object`类型，都只包含 JavaScript 内置对象原生的属性和方法，用户自定义的属性和方法都不存在于这两个类型之中
 
 ### 接口和对象类型
 
@@ -934,6 +1106,12 @@ const add(a:number,b:number = 1):number => a + b
 ```
 
 ### 联合类型
+
+联合类型（union types）指的是多个类型组成的一个新类型，使用符号`|`表示，小飞棍来喽！
+
+![](./../assets/%E6%88%91%E5%85%A8%E9%83%BD%E8%A6%81.webp)
+
+联合类型`A|B`表示，任何一个类型只要属于`A`或`B`，就属于联合类型`A|B`
 
 ```ts
 let phone:string | number = 123456 // 变量的类型同时支持字符串和数字
