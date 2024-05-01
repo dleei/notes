@@ -4,7 +4,7 @@
 
 React 是一个开源的 JavaScript 库，由Facebook开发，主要用于构建用户界面，特别是复杂的单页应用程序(SPA)。它专注于视图层，即用户界面的开发，可以与多种库或框架结合使用，以管理应用程序的状态和数据流动。
 
-![](./assets/react.png)
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/react.png)
 
 ## React 的特点：
 
@@ -40,36 +40,764 @@ npx creact-react-app react-demo
 
 使用 npx 命令会自动安装React及相关依赖，并设置好项目的基本结构
 
-<img src="./assets/%E5%88%9D%E5%A7%8B%E5%8C%96react%E9%A1%B9%E7%9B%AE.png" style="zoom: 50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%88%9D%E5%A7%8B%E5%8C%96react%E9%A1%B9%E7%9B%AE.png" style="zoom: 50%;" />
 
 cd 切换到创建的文件夹
 
 使用 `npm starrt` 启动项目
 
-<img src="./assets/%E7%AC%AC%E4%B8%80%E4%B8%AAreact%E9%A1%B9%E7%9B%AE.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E7%AC%AC%E4%B8%80%E4%B8%AAreact%E9%A1%B9%E7%9B%AE.png" style="zoom:50%;" />
 
-### 根目录下的主要文件
+## 项目的目录结构
 
-- `package.json`：项目配置文件，记录了项目名称、版本、依赖、脚本命令等信息。你可以在这里添加或修改项目依赖、自定义脚本命令等。
-- `package-lock.json`：锁定文件，记录了项目依赖的具体版本信息，确保每次安装时能获取到相同版本的依赖，保证项目环境一致性。
-- `node_modules/`：存放项目依赖的目录，包含所有通过npm安装的包。这个目录通常比较大，且应被排除在版本控制系统之外。
-- `.gitignore`：告诉Git哪些文件或目录不需要被版本控制，比如`node_modules`、`.DS_Store`等。
-- `README.md`：项目的自述文件，通常包含项目简介、安装步骤、使用方法等信息。
+```
+react-demo
+    ├─ node_modules
+    ├─ public
+	├─ favicon.ico
+	├─ index.html
+	├─ logo192.png
+	├─ logo512.png
+        ├─ manifest.json
+        ├─ robots.txt
+    ├─ src
+        ├─ App.css
+        ├─ App.js
+	├─ App.test.js
+	├─ index.css
+	├─ index.js
+	├─ logo.svg
+	├─ reportWebVitals.js
+        ├─ setupTests.js		
+    ├─ package.json
+```
 
-### src 目录
+下边我们分别来说一下每个文件（夹）的作用：
 
-src (source code) 目录是存放你编写的主要源代码的地方。
+### Node_modules
 
-- `index.js`：项目的入口文件，负责启动React应用。它导入`ReactDOM.render()`方法来将React组件挂载到DOM的一个指定元素上，通常是`<div id="root"></div>`。
-- `index.css`：全局样式文件，可以用来定义整个应用的通用样式。
-- `App.js`：默认的主要组件文件，通常作为应用的根组件，包含应用的基本结构和布局。
-- `App.test.js`：React应用的测试文件示例，使用Jest和React Testing Library进行单元测试。
-- `reportWebVitals.js`：用于报告Web应用的核心健康指标，如首次渲染时间、交互延迟等，帮助优化性能。
+node的包目录，项目所依赖到的所有第三方包,没啥可说的
 
-### public 目录
+### Public
 
-public 目录存放公共资源，对用户直接可见。
+public用来存放首页模板及静态资源，该目录中除了`index.html`都可以删除
 
-- `index.html`：项目的HTML模板文件，React应用最终会被渲染到这个文件中的`<div id="root"></div>`元素内。
-- `manifest.json`：Web应用清单文件，用于定义Web应用的名称、图标、主题色等元数据，便于PWA（Progressive Web App）的配置。
-- `favicon.ico`：网站的收藏夹图标。
+- index.html 首页模板（不能删）
+- favicon.ico 收藏夹图标（可以删，开发中会替换为自己的图标）
+- logoxxx.png React的Logo（删）
+- manifest.json（PWA的配置文件，大部分情况没啥用，删）
+- robots.txt（搜索引擎配置文件，可删）
+
+### Src
+
+源码目录,我们写代码就是在这里
+
+index.js
+
+项目入口文件，不能删。
+
+index.css
+
+index.js的样式表，可改可删
+
+App.js
+
+主组件，可改可删
+
+App.css
+
+App.js的样式表，可改可删
+
+xxx.test.js
+
+带有test的都是单元测试的文件，可删
+
+reportWebVitals.js
+
+应用性能统计相关的代码，简单说用户在使用应用时，该模块可以统计用户加载应用所花费的时间，并且根据需要发送给统计服务器，如果没有相关需求可删。
+
+## 编写我们的第一个react应用,浅尝一下
+
+```jsx
+// app.jsx
+function App() {
+  return <div className="App">你好,这是我的第一个react项目!</div>;
+}
+
+export default App;
+```
+
+
+
+```jsx
+import { createRoot } from "react-dom/client"; // react18 的新方法, 创建根节点,替代原来的 createDOM
+
+import App from "./App.jsx";  // 导入 app 组件,也是入口文件和顶级组件
+/**
+ * createRoot 接收一个 DOM 元素作为参数,返回一个根节点,在后面继续链式调用 render 方法渲染根组件到获取的 dom 元素中
+ */
+createRoot(document.querySelector("#root")).render(<App />);
+```
+
+<span style='color:#2930ff;font-size:20px'>createRoot()</span>
+
+ `createRoot(domNode, options?)`
+
+`domNode`：一个 ,DOM 元素React 将为这个 DOM 元素创建一个根节点然后允许你在这个根节点上调用函数
+
+`options?`:可选的根节点配置对象
+
+返回值
+
+`createRoot` 返回一个带有两个方法的的对象，这两个方法是：`render`和 `unmount`
+
+<span style='color: #2930ff;font-size:23px'>unmount()</span>
+
+调用 `unmount` 以销毁 React 根节点中的一个已经渲染的树
+
+返回值
+
+返回 `undefined`
+
+<span style='color: #2930ff;font-size:23px'>render()</span>
+
+- **用来将React元素渲染到根元素中**
+- **首次调用 `root.render` 时，React 会先清空根节点中所有已经存在的 HTML，然后才会渲染 React 组件**
+- **重复调用会在内部进行diff算法,将两次渲染结果进行比较,只修改发生变化的部分,避免没必要的更新,提高性能**
+
+react17 写法,不建议使用,后续可能会不再维护
+
+```jsx
+import React from "react"; // react 核心包,在 17 之前不手动导入会报错,在 17 之后可选不用手动导入
+import ReactDOM from "react-dom"; 
+import App from "./App.jsx";  // 导入App组件，作为应用的入口
+
+// 使用ReactDOM.render方法，将<App />组件渲染到id为"root"的DOM元素中
+ReactDOM.render(<App />, document.querySelector("#root")); // 接收两个参数要渲染的结构和目标 DOM
+```
+
+在react的核心包中`createRoot`方法创建根节点,还有一个方法`createElement`创建react元素,且创建后无法修改,只能覆盖
+
+```jsx
+import { createElement } from 'react-dom/client'
+createElemnet('div',{id:'box',type:'div',className:'btn',onClick:()=>{alert('哎呀!你干嘛.')}},'你好!我是蔡徐坤') 
+// 接收三个参数,第一个是创建元素的类型,第二个是元素对应的一些样式的配置对象,第三个参数是要填充的内容
+```
+
+> 元素名称必须为html格式的小写
+>
+> 标签中的属性class属性使用className,设置事件属性名采用驼峰命名
+>
+> 元素的内容,子元素,直接在后面使用逗号隔开添加
+
+## jsx概念
+
+JSX是JavaScript XML的缩写，它是一种用于在React中编写UI组件的语法扩展。JSX允许开发者在JavaScript代码中编写类似HTML的结构，使得编写和阅读React组件更加直观和简洁。虽然它看起来像是在JavaScript中直接写HTML，但实际上，JSX被编译成普通的JavaScript函数调用，这些函数调用会创建虚拟DOM元素树，最终渲染为真实的DOM元素。
+
+### jsx本质
+
+JSX并不是标准的JS语法，它是JS的语法扩展，浏览器本身不能识别，需要通过解析工具做解析之后才能在浏览器中运行
+
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/babel%E8%A7%A3%E6%9E%90.png)
+
+jsx是声明式编程，简单理解就是以<font color='red'>结果</font>为导向，就像是你的老板，我不管你的过程我只要结果
+
+```jsx
+// 命令式编程
+// 使用createElement创建一个react元素，就相当于我告诉你，我给你10块钱，出门右转，到第二个红路灯路口右转，到旁边的商店买一包盐，再怎么怎么回来
+const button = createElement('button',{},'按钮')
+
+// 使用jsx 面向结果声明式编程，以结果为导向
+//  可以简单理解为，我告诉你家里炒菜现在没盐了，想办法整一包来，我不管你是使用什么方法 
+const button = <button>我是按钮</button>
+
+```
+
+
+
+#### jsx中使用js表达式
+
+在jsx中可以通过 大括号语法`{ }`识别JavaScript中的表达式，比如常见的变量、函数调用、方法调用等等
+
+```jsx
+<script setup>
+ const app = <div calssName="app">
+          // 使用引号传递字符串
+          {'php是世界上最好的语言'}
+          // 识别变量
+          const name = tom
+          { name }
+          // 函数调用
+          const getUserInfo = () => {
+              return { name: Tom , age: 18 }
+          }
+          { getUserInfo() }
+          // 方法调用
+          { New Date().getDate() }
+          //使用js对象
+          <div style={{color:'red'}}>Hello World</div> // 外层{ }识别表达式语法,内层{ }为对象
+      </div>
+</script>
+```
+
+> 注意：
+>
+> - jsx不是字符串，不要加引号
+> - jsx中的html标签小写开头，React组件为大写开头
+> - jsx有且只有一个根标签，必须正确结束
+> - 布尔类型、Null 以及 Undefined 将会忽略
+> - if语句、Switch语句、变量声明属于语句，不是表达式，不能出现在{ }中
+
+### 小练习:列表渲染
+
+```jsx
+const heroList = [
+  {
+    id: 1,
+    name: '锐雯',
+    lane: '上单',
+  },
+
+  {
+    id: 2,
+    name: '泰拉米尔',
+    lane: '上单',
+  },
+
+  {
+    id: 3,
+    name: '奎因',
+    lane: '上单',
+  },
+
+  {
+    id: 4,
+    name: '奥恩',
+    lane: '上单',
+  },
+
+  {
+    id: 5,
+    name: '亚索',
+    lane: '中单',
+  },
+
+  {
+    id: 6,
+    name: '李青',
+    lane: '打野',
+  },
+
+  {
+    id: 7,
+    name: '努努',
+    lane: '打野',
+  },
+
+  {
+    id: 8,
+    name: '艾希',
+    lane: 'ADC',
+  },
+
+  {
+    id: 9,
+    name: '薇恩',
+    lane: 'ADC',
+  },
+
+  {
+    id: 10,
+    name: '卡特琳',
+    lane: '辅助',
+  },
+
+  {
+    id: 11,
+    name: '莫德凯撒',
+    lane: '辅助',
+  },
+]
+
+function getHeroList() {
+  return (
+    <ul>
+      {heroList.map(hero => (
+        <li key={hero.id}>{hero.name}&nbsp;&nbsp;分路:{hero.lane}</li>
+      ))}
+    </ul>
+  )
+}
+
+export default getHeroList;
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
