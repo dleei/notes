@@ -119,7 +119,7 @@ reportWebVitals.js
 ## 编写我们的第一个react应用,浅尝一下
 
 ```jsx
-// app.jsx
+// app.tsx
 function App() {
   return <div className="App">你好,这是我的第一个react项目!</div>;
 }
@@ -132,7 +132,7 @@ export default App;
 ```jsx
 import { createRoot } from "react-dom/client"; // react18 的新方法, 创建根节点,替代原来的 createDOM
 
-import App from "./App.jsx";  // 导入 app 组件,也是入口文件和顶级组件
+import App from "./App.tsx";  // 导入 app 组件,也是入口文件和顶级组件
 /**
  * createRoot 接收一个 DOM 元素作为参数,返回一个根节点,在后面继续链式调用 render 方法渲染根组件到获取的 dom 元素中
  */
@@ -213,9 +213,7 @@ const button = <button>我是按钮</button>
 
 ```
 
-
-
-#### jsx中使用js表达式
+### jsx中使用js表达式
 
 在jsx中可以通过 大括号语法`{ }`识别JavaScript中的表达式，比如常见的变量、函数调用、方法调用等等
 
@@ -248,7 +246,7 @@ const button = <button>我是按钮</button>
 > - 布尔类型、Null 以及 Undefined 将会忽略
 > - if语句、Switch语句、变量声明属于语句，不是表达式，不能出现在{ }中
 
-### 小练习:列表渲染
+### 列表渲染
 
 ```jsx
 const heroList = [
@@ -333,471 +331,146 @@ export default getHeroList;
 
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### 条件渲染
+
+```jsx
+export const isLogin = false
+
+export selectedValue = 1
+
+export const getOptions = (val)=>{
+if (val === 1) {
+  return <div>选项1</div>
+}else if (val === 2) {
+  return <div>选项2</div>
+}else {
+  return <div>选项3</div>
+ }
+}
+
+function App() {
+    return (
+        // 需要判断两个内容的显示隐藏的时候 可以使用 if else 或是使用简短的三元
+    <div>{ isLogin ? '登录成功' : '未登录' }</div> // 未登录
+        // 只需判断一个内容显示隐藏,无需使用 else 的时候,可以选择逻辑或 && 来判断,当值为真时,显示,否则反之
+    <div>{ isLogin && '登录成功!' }</div> 
+        // 判断多组内容
+        //无法在 jsx 内书写 if else 语句 我们通过调用函数来判断,在函数内进行 if else 判断
+     <div>{ getOptions }</div>
+    )
+}
+```
+
+### 响应事件
+
+```jsx
+function myButton () {
+    const handleClick = () => alert('喜中500万,请到缅北kk园区兑换!')
+    return (
+    <button onClick={ handleClick }>开奖</button>
+    )
+}
+```
+
+> `onClick={handleClick}` 的结尾没有小括号！不要调用事件处理函数：你只需把函数传递给事件即可。当用户点击按钮时 React 会调用你传递的事件处理函数。
+
+### 更新数据,设置数据
+
+在 `vue3` 中我们使用 `ref` 和 `reactive` 来声明响应式数据
+
+而在 `react` 中我们使用 `useState` 钩子，来创建一个响应式数据,通过 count 来访，通过 setCount 来修改数据
+
+```tsx
+import { useState } from 'react'
+
+function App() {
+  const [count, setCount] = useState(0)
+// 你将从 useState 中获得两样东西：当前的 state（count），以及用于更新它的函数（setCount）。你可以给它们起任何名字，但按照惯例会像 [something, setSomething] 这样为它们命名
+  return (
+      <div>
+        <div>{count}</div>
+        <button onClick={() => setCount(count + 1)}>按钮</button>
+      </div>
+  )
+}
+
+```
+
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE.gif)
+
+一个组件中与多个相同的组件，数据之间是相互隔离的
+
+```tsx
+import { useState } from 'react';
+
+export default function MyApp() {
+  return (
+    <div>
+      <h1>数据更新</h1>
+      <MyButton />
+      <MyButton />
+    </div>
+  );
+}
+
+function MyButton() {
+  const [count, setCount] = useState(0);
+
+  function handleClick() {
+    setCount(count + 1);
+  }
+
+  return (
+    <button onClick={handleClick}>
+      当前数据： {count} 
+    </button>
+  );
+}
+```
+
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E6%95%B0%E6%8D%AE%E7%8B%AC%E7%AB%8B%E7%BB%B4%E6%8A%A4.gif" style="zoom:80%;" />
+
+### 组件间共享数据
+
+```tsx
+import { useState } from 'react';
+
+export default function MyApp() { 
+  // 在 MyApp 组件中定义 count 状态和 handleClick 事件处理函数
+  const [count, setCount] = useState(0);
+
+  function handleClick() {
+    // 当按钮被点击时，更新 count 状态
+    setCount(count + 1);
+  }
+
+  return (
+    <div>
+      <h1>数据更新</h1>
+      {/* 将 handleClick 函数和 count 状态通过 props 传递给 MyButton 组件 */}
+      <MyButton onClick={ handleClick } count={ count }/>
+      <br/>
+      <MyButton onClick={ handleClick } count={ count }/>
+    </div>
+  );
+}
+
+// MyButton 组件接收 onClick 和 count 作为 props
+function MyButton({ onClick, count }: { onClick: () => void, count: number }) {
+  // 当按钮被点击时，调用父组件传递过来的 onClick 函数
+  return (
+    <button onClick={ onClick }>
+      {/* 显示从父组件传递来的 count 值 */}
+      当前数字为：{ count }
+    </button>
+  );
+}
+
+```
+
+1. 我们将 `count` 状态和 `handleClick` 事件处理函数从 `MyButton` 组件移动到了 `MyApp` 组件中。这种做法称为“状态提升”，可以将共享的状态和行为放在更高层级的组件中。
+2. 在 `MyApp` 组件中，我们通过 props 将 `handleClick` 函数和 `count` 状态传递给每个 `MyButton` 组件。这样，每个按钮都可以访问相同的状态和行为。
+3. 在 `MyButton` 组件中，我们接收 `onClick` 和 `count` 作为 props，并将 `onClick` 函数绑定到按钮的点击事件上。每个按钮显示的数字都是从父组件传递过来的 `count` 值。
+
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB.gif" style="zoom:80%;" />
 
