@@ -907,14 +907,20 @@ s.charAt(1)   // 'e'
 
 ### 字面量类型
 
-字面量模式的对象类型是无法进行修改赋值操作的
+字面量模式的对象类型是无法进行修改赋值操作的，一般会结合联合类型限制只能选择其中的几个
 
 ```ts
 let a:{ }  // 可以理解为 new Object，创建一个新对象支持所有的类型
 let a:{ } = 123
 let a:{ } = '123'
 let a:{ } = []
-let a:{ } = {name:张三}
+let a:{ } = { name:张三 }
+// 结合联合类型进行限制
+function printText(str:string,alignment:'left'| 'center'|'right') {
+    ...
+}
+printText('hello','left')
+printText('hello','middle') // cuo'wu
 ```
 
 ### object与Object类型的区别
