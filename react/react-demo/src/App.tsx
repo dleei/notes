@@ -1,27 +1,18 @@
-import { useState } from 'react';
-
-export default function MyApp() {
-  const [count, setCount] = useState(0);
-
-  function handleClick() {
-    setCount(count + 1);
-  }
-
+const App = () => {
   return (
     <div>
-      <h1>数据更新</h1>
-      <MyButton onClick={ handleClick } count={ count }/>
-      <br/>
-      <MyButton onClick={ handleClick } count={ count }/>
+      <h1>父组件</h1>
+      <Child />
     </div>
   );
 }
 
-function MyButton({ onClick,count}:{ onClick: () => void, count: number }) {
-
+const Child = () => {
   return (
-    <button onClick={ onClick }>
-    当前数字为：{ count }
-    </button>
+    <div>
+      <h1>子组件</h1>
+    </div>
   );
 }
+
+export default App;

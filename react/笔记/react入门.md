@@ -243,8 +243,54 @@ const button = <button>我是按钮</button>
 > - jsx不是字符串，不要加引号
 > - jsx中的html标签小写开头，React组件为大写开头
 > - jsx有且只有一个根标签，必须正确结束
-> - 布尔类型、Null 以及 Undefined 将会忽略
+> - 布尔类型、Null 、直接写对象的形式以及 Undefined 将会忽略
 > - if语句、Switch语句、变量声明属于语句，不是表达式，不能出现在{ }中
+
+jsx只允许只有一个根标签，我们也可以使用<Fragment></Fragment> 的虚拟根标签来包裹内容，最终是不会渲染出来的，可以理解为vue中的template标签
+
+```tsx
+import { Fragment } from "react/jsx-runtime";
+
+export default function App() {
+  return (
+    <Fragment>
+      <h1>Hello, world!</h1>
+    </Fragment>
+  )
+}
+
+简写形式
+export default function App() {
+  return (
+    <>
+      <h1>Hello, world!</h1>
+    </>
+  )
+}
+```
+
+上面提到了一些像布尔类型，null和undefined是不会显示的，那如果我们在调试的时候需要显示那该怎么办呢？
+
+通过值 加上空字符串的形式来解决，对象我们可以使用JSON.stringify()转成字符串的形式来显示
+
+```tsx
+export default function App() {
+  return (
+    <>
+     <div>
+      { false + ''}
+      <br />
+      { true + ''}
+      <br />
+      { undefined + ''}
+      <br />
+      {JSON.stringify({name: 'tom', age: 30})}
+      <br />
+     </div>
+    </>
+  );
+}
+```
 
 ### 列表渲染
 
@@ -373,6 +419,116 @@ function myButton () {
 ```
 
 > `onClick={handleClick}` 的结尾没有小括号！不要调用事件处理函数：你只需把函数传递给事件即可。当用户点击按钮时 React 会调用你传递的事件处理函数。
+
+传递参数
+
+通过一个箭头函数的回调来传值
+
+```tsx
+export default function App() {
+  const handleClick = (e: any, value: object) => {
+    console.log(e, value);
+  };
+
+  return (
+    <>
+      <button onClick={(e) => handleClick(e, {name: '123', age: 123})}>点击按钮</button>
+    </>
+  );
+}
+```
+
+### 组件点标记写法
+
+有两种方式，一种是对象的方式，一种是函数的形式
+
+```tsx
+// 函数的形式
+const App = () => {
+ return (
+  <>
+  <div>hello</div>
+  <User/>
+  </>
+ )
+}
+
+const User = () => {
+  return (
+    <div>Welcome</div>
+  )
+}
+
+export default App;
+```
+
+```tsx
+// 对象的形式
+const App = () => {
+ return (
+  <>
+  <div>hello</div>
+  <Abc.User/>
+  <Abc.Info/>
+  </>
+ )
+}
+
+ const Abc = {
+  User() {
+    return <div>Welcome</div>
+  },
+  Info() {
+    return <div>Info</div>
+  },
+}
+```
+
+这种好处就是我们可以在一个单独的模块下维护多个属于这一个类型的组件，在使用时就知道这个组件是属于哪一个大模块下的，方便维护
+
+同样你也可以选择使用解构，如果你愿意的话
+
+### 组件通讯
+
+```tsx
+父向子通讯
+const App = () => {
+  const text = '你好 React！'
+  return (
+    <>
+      <div>
+        父组件
+        <User
+          name='张三'
+          text={text}
+        />
+      </div>
+    </>
+  )
+}
+传递字符串，变量
+const User = ({ name, text }) => {
+  return (
+    <>
+      <div>子组件：user界面</div>
+      <div>{name}</div>
+      <div>{text}</div>
+    </>
+  )
+}
+传递函数，事件
+
+export default App
+使用属性绑定数据或是以变量形式传递数据
+在子组件中可以使用porps进行接收或是对其进行解构渲染
+```
+
+```tsx
+子向父通讯
+
+```
+
+
 
 ### 更新数据,设置数据
 
