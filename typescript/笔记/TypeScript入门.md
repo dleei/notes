@@ -990,10 +990,10 @@ interface Person {
 const person:Person  = {
     a:"213"
 }
-//重名interface  可以合并
+//重名 interface 可以合并
 interface A{name:string}
 interface A{age:number}
-var x:A={name:'xx',age:20}
+const x:A={name:'xx',age:20}
 ```
 
 ### 继承
@@ -1011,6 +1011,55 @@ let obj:B = {
     age:18,
     name:"string"
 }
+```
+
+### 类型别名
+
+type 关键字，可以给一个类型定义一个名字，多用于复合类型
+
+#### 定义类型别名
+
+```ts
+// 说白了就是给变量后面的类型起一个名字，名字随意，可以简短一点
+type username = string
+let str:username = '小磊'
+```
+
+#### 定义函数别名
+
+```ts
+type str = () => string
+let str:str  = () => 'anyscript'
+```
+
+#### 定义联合类型别名
+
+```ts
+type str = string | number
+let str1:str = 123
+let str2:str = '123'
+```
+
+#### 定义值的别名
+
+```ts
+type value = 123 | '123' | 456
+let value:value = 123 // 变量value的值只能是上面value定义的值
+```
+
+type与interface的区别
+
+```ts
+interface A extends B {
+ // interface 可以用 extends 继承属性
+}
+// 重名 interface 会合并
+interface B {
+
+}
+
+type A = string & B  // type 只能使用 & 交叉类型来实现，合到一起
+type C = number | string  // 可以使用联合类型
 ```
 
 ### 可选属性 使用`?`操作符
@@ -1063,18 +1112,15 @@ let arr:number[] = [1,2,3,4]
 方式2，使用泛型表示
 
 ```ts
-let Array<number> = [1,2,3,4]
+let arr:Array<number> = [1,2,3,4]
 ```
 
 使用 interface 定义对象数组
 
 ```ts
 interface Array = {
-
 name：string
-
 age：number
-
 }
 
 let  arr: Array[] = [{name:'小磊'，age：18}，{name: '张三'，age：20}]
@@ -1188,6 +1234,8 @@ document.addEventListener('click', function (e: MouseEvent) {
 
 ### 枚举类型
 
+枚举类型我的个人理解就是为类型起了一个名字，它对应这一个指定的数字或是字符串，在声明是就必须满足我们规定的类型，尽管我们也是可以手动来进行类型限定的，但是枚举类型的使用可以让我们给成员赋予有意义的名字，使得代码更加易读和理解
+
 #### 数字枚举
 
 例如红绿蓝，red=0，green=1，blue=2，分别代表红色为0，绿色为1，蓝色为2
@@ -1252,7 +1300,7 @@ yes: 1
 定义一个枚举Types 定义一个接口A 他有一个属性red 值为Types.yyds，在声明这个对象的时候要遵守这个规则
 
 ```ts
-enum Type {
+enum Types {
 yyds,
 ddd
 }
@@ -1266,7 +1314,46 @@ red:Type.yyds
 }
 ```
 
-#### const枚举
+#### 同名 enmu 合并
+
+多个同名的 Enum 结构会自动合并。
+
+```ts
+enum Foo {
+  A,
+}
+
+enum Foo {
+  B = 1,
+}
+
+enum Foo {
+  C = 2,
+}
+
+// 等同于
+enum Foo {
+  A,
+  B = 1，
+  C = 2
+}
+```
+
+同名 Enum 合并时，不能有同名成员，否则报错。
+
+```ts
+enum Foo {
+  A,
+  B
+}
+
+enum Foo {
+  B = 1, // 报错
+  C
+}
+```
+
+#### const枚举（常量枚举）
 
 const 声明的枚举会被编译成常量
 
@@ -1279,6 +1366,34 @@ green = 1,
 blue = 2
 }
 ```
+
+#### keyof 运算符
+
+keyof 运算符可以取出 Enum 结构的所有成员名，作为联合类型返回
+
+```ts
+enum MyEnum {
+  A = 'a',
+  B = 'b'
+}
+
+// 'A'|'B'
+type Foo = keyof typeof MyEnum;
+```
+
+如果要返回 Enum 所有的成员值，可以使用in运算符
+
+```ts
+enum MyEnum {
+  A = 'a',
+  B = 'b'
+}
+
+// { a: any, b: any }
+type Foo = { [key in MyEnum]: any };
+```
+
+
 
 ### 类型推论
 
@@ -1317,56 +1432,20 @@ function toString(num:number) {
 
 这样设计还有一个好处，将以前的 JavaScript 项目改为 TypeScript 项目时，你可以逐步地为老代码添加类型，即使有些代码没有添加，也不会无法运行
 
-### 类型别名
+### 非空断言
 
-type 关键字，可以给一个类型定义一个名字，多用于复合类型
-
-#### 定义类型别名
+这是`typescript`的一种特殊语法，可以在不进行任何显式检查的情况下从类型中删除 `null` 和 `undefined`，在一个表达式之后填上 `！` ，表示我断定这个值一定不是`null`或是`undefined`，你不要给我多管闲事了
 
 ```ts
-// 说白了就是给变量后面的类型起一个名字，名字随意，可以简短一点
-type username = string
-let str:username = '小磊'
-```
-
-#### 定义函数别名
-
-```ts
-type str = () => string
-let str:str  = () => 'anyscript'
-```
-
-#### 定义联合类型别名
-
-```ts
-type str = string | number
-let str1:str = 123
-let str2:str = '123'
-```
-
-#### 定义值的别名
-
-```ts
-type value = 123 | '123' | 456
-let value:value = 123 // 变量value的值只能是上面value定义的值
-```
-
-type与interface的区别
-
-```ts
-interface A extends B {
- // interface 可以用 extends 继承属性
+function liveDangerously(x?: number | null) {
+  // No error
+  console.log(x!.toFixed());
 }
-// 重名 interface 会合并
-interface B {
-
-}
-
-type A = string & B  // type 只能使用 & 交叉类型来实现，合到一起
-type C = number | string  // 可以使用联合类型
 ```
 
 ### 泛型
+
+很多的时候比如说函数在使用的时候，我们并不知道它需要什么样的参数，那我们就可以在调用的时候把类型给传进去，定义类型的时候使用一个变量来保存，可以简单理解为，就是使用一个 slot 来占位
 
 我们写了两个函数，一个是数字类型的函数，一个是字符串类型的函数，实现的功能是一样的，就只是类型不一样，这个时候我们就可以使用泛型来进行优化
 
@@ -1415,6 +1494,30 @@ const getLength<T extends Len> = (value:T) => {
 getLength<string>('12564') // 5
 ```
 
+#### 类型参数默认值
+
+类型参数可以设置默认值。使用时，如果没有给出类型参数的值，就会使用默认值。
+
+```ts
+function getFirst<T = string>(
+  arr:T[]
+):T {
+  return arr[0];
+}
+```
+
+上面示例中，T = string表示类型参数的默认值是string。调用getFirst()时，如果不给出T的值，TypeScript 就认为T等于string。
+
+但是，因为 TypeScript 会从实际参数推断出T的值，从而覆盖掉默认值，所以下面的代码不会报错。
+
+```ts
+getFirst([1, 2, 3]) // 正确
+```
+
+上面示例中，实际参数是[1, 2, 3]，TypeScript 推断 T 等于number，从而覆盖掉默认值string。
+
+
+
 ### 三斜线指令
 
 
@@ -1437,7 +1540,6 @@ npm i @types/包名 -D
 
 ```ts
 import express from 'express'
- 
  
 const app = express()
  
