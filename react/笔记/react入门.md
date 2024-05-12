@@ -246,7 +246,7 @@ const button = <button>我是按钮</button>
 > - 布尔类型、Null 、直接写对象的形式以及 Undefined 将会忽略
 > - if语句、Switch语句、变量声明属于语句，不是表达式，不能出现在{ }中
 
-jsx只允许只有一个根标签，我们也可以使用<Fragment></Fragment> 的虚拟根标签来包裹内容，最终是不会渲染出来的，可以理解为vue中的template标签
+`jsx`只允许只有一个根标签，我们也可以使用<Fragment></Fragment> 的虚拟根标签来包裹内容，最终是不会渲染出来的，可以理解为vue中的`template`标签
 
 ```tsx
 import { Fragment } from "react/jsx-runtime";
@@ -490,8 +490,11 @@ const App = () => {
 
 ### 组件通讯
 
+#### 父向子通讯
+
+##### 传递字符串，变量
+
 ```tsx
-父向子通讯
 const App = () => {
   const text = '你好 React！'
   return (
@@ -506,7 +509,7 @@ const App = () => {
     </>
   )
 }
-传递字符串，变量
+在子组件中可以使用porps进行接收或是对其进行解构渲染
 const User = ({ name, text }) => {
   return (
     <>
@@ -516,19 +519,184 @@ const User = ({ name, text }) => {
     </>
   )
 }
-传递函数，事件
-
 export default App
-使用属性绑定数据或是以变量形式传递数据
-在子组件中可以使用porps进行接收或是对其进行解构渲染
 ```
+
+##### 传递函数，事件
+
+###### 事件
 
 ```tsx
-子向父通讯
+const App = () => {
+  const getMsg = () => {
+    alert('调用了父组件的方法')
+  }
+  return (
+    <div>
+      <h1>父组件</h1>
+      <Child onClick={getMsg} />  // 这里的 onClick 相当于就是一个属性用来传递数据的，所以在点击时并不会触发点击事件
+    </div>
+  )
+}
+// 使用解构接收这个事件，并绑定在子组件的 button 按钮上
+ const Child = ({ onClick }) => {
+  return (
+    <div>
+      <h1>子组件</h1>
+      <button onClick={onClick}>点击</button>
+    </div>
+  )
+}
 
+export default App
 ```
 
+###### 自定义函数
 
+```tsx
+const App = () => {
+  const getData = data => { // 接收子组件传递来的数据并打印
+    console.log(data)
+  }
+  return (
+    <div>
+      <h1>父组件</h1>
+      <Child getData={getData} />  // 向子组件传递了一个自定义函数
+    </div>
+  )
+}
+// 使用解构接收这个函数
+const Child = ({ getData }) => {
+  const text = '来自遥远的子组件的数据'
+  return (
+    <div>
+      <h1>子组件</h1>
+      <button onClick={getData(text)}>点击</button> // 在子组件中点击触发这个自定义函数，并传递数据
+    </div>
+  )
+}
+
+export default App
+```
+
+#### 使用扩展运算符批量传递数据
+
+```tsx
+const App = () => {
+  const data = {
+    name: '张三',
+    age: 18,
+    gender: '男',
+    address: '北京市',
+    hobby: ['篮球', '足球', '游泳'],
+  }
+  return (
+    <div>
+      <h1>父组件</h1>
+      <Child {...data} />
+    </div>
+  )
+}
+
+const Child = ({ name, age, gender, address, hobby }) => {
+  return (
+    <div>
+      <h1>子组件</h1>
+      <h3>{name}</h3>
+      <h3>{age}</h3>
+      <h3>{gender}</h3>
+      <h3>{address}</h3>
+      <ul>
+        {hobby.map((item, index) => {
+          return <li key={index}>{item}</li>
+        })}
+      </ul>
+    </div>
+  )
+}
+
+export default App
+```
+
+#### 子向父通讯
+
+```tsx
+const App = () => {
+  const getData = data => { // 定义了一个函数用于打印接收到的变量
+    console.log(data)
+  }
+  return (
+    <div>
+      <h1>父组件</h1>
+      <Child getData={ getData } /> // 向子组件发送了一个函数用于更改或是显示父组件中的数据
+    </div>
+  )
+}
+// 使用解构接收父组件的函数
+const Child = ({ getData }) => {
+  const text = '来自遥远的子组件的数据' // 子组件中的数据
+  const sendData = () => { // 子组件中的方法
+    getData(text) // 调用父组件中的方法传递数据，用于更改父组件中的状态
+  }
+
+  return (
+    <div>
+      <h1>子组件</h1>
+      <button onClick={ sendData }>点击</button> // 点击触发子组件中的事件函数
+    </div>
+  )
+}
+
+export default App
+```
+
+#### 传递设置默认值
+
+```tsx
+const App = () => {
+  const number = 100
+  const data = 'App组件数据内容'
+  return (
+    <div>
+      <h1>父组件</h1>
+      <Child
+        number={number}
+        data={data}
+      />
+    </div>
+  )
+}
+
+// 方式一：使用 es6 添加默认值的方式，直接在后面赋值
+const Child = ({ number = 0, data = '默认显示的数据' }) => {
+  return (
+    <div>
+      <h2>子组件</h2>
+      {number}
+      <hr />
+      {data}
+    </div>
+  )
+}
+
+const Child = ({ number, data }) => {
+  return (
+    <div>
+      <h2>子组件</h2>
+      {number}
+      <hr />
+      {data}
+    </div>
+  )
+}
+// 方式二: 使用 react 提供的defaultProps 属性，在组件中添加默认值
+Child.defaultProps = {
+  number: 0,
+  data: '默认显示的数据',
+}
+
+export default App
+```
 
 ### 更新数据,设置数据
 
@@ -586,6 +754,10 @@ function MyButton() {
 
 <img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E6%95%B0%E6%8D%AE%E7%8B%AC%E7%AB%8B%E7%BB%B4%E6%8A%A4.gif" style="zoom:80%;" />
 
+### react中的“计算属性”
+
+
+
 ### 组件间共享数据
 
 ```tsx
@@ -612,7 +784,7 @@ export default function MyApp() {
 }
 
 // MyButton 组件接收 onClick 和 count 作为 props
-function MyButton({ onClick, count }: { onClick: () => void, count: number }) {
+function MyButton({ onClick, count }) {
   // 当按钮被点击时，调用父组件传递过来的 onClick 函数
   return (
     <button onClick={ onClick }>
@@ -629,4 +801,238 @@ function MyButton({ onClick, count }: { onClick: () => void, count: number }) {
 3. 在 `MyButton` 组件中，我们接收 `onClick` 和 `count` 作为 props，并将 `onClick` 函数绑定到按钮的点击事件上。每个按钮显示的数字都是从父组件传递过来的 `count` 值。
 
 <img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB.gif" style="zoom:80%;" />
+
+### 组件的排列组合
+
+一个父组件里面套了一个子组件，那如果我想在子组件里面接着嵌套其他的功能模块的时候是把它放到子组件的内容里面吗？
+
+我们来 try 一 try
+
+```tsx
+const App = () => {
+  return (
+    <div>
+      <h1>父组件</h1>
+      <Child />
+    </div>
+  )
+}
+
+const Child = () => {
+  return (
+    <div>
+      <h2>子组件</h2>
+      <Other />
+      <List />
+    </div>
+  )
+}
+
+const Other = () => {
+  return (
+    <div>
+      <h3>其他组件</h3>
+    </div>
+  )
+}
+
+const List = () => {
+  return (
+    <div>
+      <h3>列表组件</h3>
+    </div>
+  )
+}
+
+export default App
+```
+
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E7%BB%84%E4%BB%B6%E7%9A%84%E7%BB%84%E5%90%88.png)
+
+可以实现效果
+
+这样就会出现一个问题，就是我子组件里面的组件想要去拿取数据只能是在相对于它自己的父级，涉及到了一个作用域的问题
+
+```tsx
+const App = () => {
+  const appData = 'App组件数据内容'
+  return (
+    <div>
+      <h1>父组件</h1>
+      <Child />
+    </div>
+  )
+}
+
+const Child = () => {
+  const childData = 'Child组件数据内容'
+  return (
+    <div>
+      <h2>子组件</h2>
+      <Other data={childData} />
+    </div>
+  )
+}
+
+const Other = ({ data }) => {
+  return (
+    <div>
+      <h3>其他组件 :{data}</h3>
+    </div>
+  )
+}
+
+export default App
+```
+
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E7%BB%84%E4%BB%B6%E7%9A%84%E7%BB%84%E5%90%88-1.png)
+
+所以在实际开发中一般使用 props 里面的另外一个属性 children 属性来渲染组件内的任何子元素
+
+> 注意是小写
+
+```tsx
+const App = () => {
+  const data = '父组件数据'
+  return (
+    <div>
+      <h1>父组件</h1>
+      <Child>
+        <Other data={data} />
+      </Child>
+    </div>
+  )
+}
+
+const Child = ({ children }) => {
+  return (
+    <div>
+      <h2>子组件</h2>
+      {children}
+    </div>
+  )
+}
+
+const Other = ({ data }) => {
+  return (
+    <div>
+      <h3>其他组件{data}</h3>
+    </div>
+  )
+}
+
+export default App
+```
+
+这样就实现了跨层级之间的数据传递
+
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E7%BB%84%E4%BB%B6%E7%9A%84%E7%BB%84%E5%90%88-2.png)
+
+但是如果我想要传递多个内容并把它放在指定不同的位置，该如何实现呢？
+
+这个和 vue 中的插槽的功能有一些相像，都是向组件内分发内容,不过 vue 是可以通过具名插槽来进行指定的分发和接收
+
+vue 的实现方式
+
+```tsx
+// app.vue
+<script setup lang="ts">
+  import son from './components/son.vue'
+</script>
+
+<template>
+  <son>
+    <template #header>
+      <h1>我是标题</h1>
+    </template>
+
+    <template #default>
+      <p>我是内容</p>
+    </template>
+
+    <template #footer>
+      <p>我是底部</p>
+    </template>
+  </son>
+</template>
+
+// son.vue
+<template>
+  <div class="root">
+    <slot name="header"></slot>
+    <slot name="default"></slot>
+    <slot name="footer"></slot>
+  </div>
+</template>
+```
+
+react的实现方式
+
+在传递数据的时候是可以传递 jsx 的，我们在传递的时候就直接传递不同的内容，对应进行接收使用
+
+```tsx
+const App = () => {
+  return (
+    <div>
+      <h1>父组件</h1>
+      <Child header={<h4>头部标题</h4>} body={<p>内容</p>} />
+    </div>
+  )
+}
+
+const Child = ({ header,body }) => {
+  return (
+    <div>
+      <h2>子组件</h2>
+      {header}
+      <hr />
+      {body}
+    </div>
+  )
+}
+
+export default App
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
