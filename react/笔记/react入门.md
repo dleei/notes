@@ -1046,17 +1046,263 @@ export default App
 
 ```
 
+### 自定义hook
+
+```tsx
+import { useState } from 'react'
+// 把可复用的逻辑写在一个自定义的 hook 中，最后返回设定的值和方法，可以以数组或是对象的形式返回
+const useToggle = () => {
+  const [value, setValue] = useState(false)
+  const toggle = () => setValue(!value)
+  return [value, toggle]
+}
+
+const App = () => {
+  // 使用自定义 hook
+  // 调用 useToggle 返回的值和方法
+  const [value, toggle] = useToggle()
+  return (
+    <div>
+      <button onClick={toggle}>Toggle</button>
+      <div>{value && 'Hello World'}</div>
+    </div>
+  )
+}
+
+export default App
+```
+
+### ReactRouter
+
+安装 react-router-dom 包
+
+```tsx
+pnpm i react-router-dom
+```
+
+```tsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { RouterProvider } from 'react-router-dom' // 引入路由组件
+import  router  from './router' // 引入路由实例
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <RouterProvider router={router}></RouterProvider>   RouterProvider 用来提供路由出口并绑定路由
+  </React.StrictMode>
+)
+```
+
+配置路由信息
+
+```tsx
+import { createBrowserRouter } from 'react-router-dom'
+
+import Home from '../pages/home'
+import Article from '../pages/article'
+// 创建路由实例对象
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />, // element 表示要渲染的组件 ，就是 vue 中的component
+  },
+  {
+    path: '/article',
+    element: <Article />,
+  },
+])
+// 导出路由实例对象
+export default router
+```
+
+#### 路由跳转
+
+编程式导航
+
+使用 `useNavigate`
+
+```tsx
+import { Link , useNavigate} from "react-router-dom"
+
+const Home = () => {
+   const navigate = useNavigate()
+  return (
+    <div>
+      <Link to="/article">article</Link>
+      <h1>home</h1>
+      <button onClick={() => navigate('/article')}>去文章页面</button>
+    </div>
+  )
+}
+export default Home
+
+```
+
+声明式导航
+
+使用 Link 标签 to 属性后为跳转的路径地址，在实际渲染时会被渲染为 html 的 a 标签
+
+```tsx
+import { Link } from "react-router-dom"
+
+const Home = () => {
+  return (
+    <div>
+      <Link to="/article">article</Link>
+      <h1>home</h1>
+    </div>
+  )
+}
+export default Home
+```
 
 
 
+#### 路由传参
+
+useParams传参
+
+```tsx
+import { Link } from 'react-router-dom'
+// 使用了useSearchParams钩子来获取URL中的查询参数。useSearchParams返回一个数组，其中第一个元素是SearchParams对象，第二个元素是一个函数，用于更新查询参数
+import { useSearchParams } from 'react-router-dom'
+const Article = () => {
+  const [params] = useSearchParams()
+  const id = params.get('id')
+  return (
+    <div>
+      <Link to='/home'>回到首页</Link>
+      <h1>article</h1>
+      <p>{id}</p>
+    </div>
+  )
+}
+export default Article
+```
+
+params传参
+
+```tsx
+import { Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+const Article = () => {
+  const params = useParams()
+  const id = params.id // params 是通过.语法来获取传递的参数
+  return (
+    <div>
+      <Link to='/home'>回到首页</Link>
+      <h1>article</h1>
+      <p>{id}</p>
+    </div>
+  )
+}
+export default Article
+```
 
 
 
+#### 嵌套路由
+
+```tsx
+import { createBrowserRouter } from 'react-router-dom'
+
+import Home from '../pages/home'
+import Article from '../pages/article'
+// 创建路由实例对象
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />, // element 表示要渲染的组件 ，就是 vue 中的component
+    children: [
+      {
+        path: 'article',
+        element: <Article />,
+      }
+    ]
+  },
+
+])
+// 导出路由实例对象
+export default router
+```
 
 
 
+```tsx
+import { Link , Outlet} from "react-router-dom" // outlet 表示占位符,表示二级路由的渲染位置
 
+const Home = () => {
+  return (
+    <div>
+      <Link to='/article'>article</Link>
+      <h1>home</h1>
+      <Outlet/>
+    </div>
+  )
+}
+export default Home
 
+```
+
+默认显示二级路由
+
+去掉二级路由的 path 属性替换为 index：true
+
+```tsx
+import { createBrowserRouter } from 'react-router-dom'
+
+import Home from '../pages/home'
+import Article from '../pages/article'
+// 创建路由实例对象
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />, // element 表示要渲染的组件 ，就是 vue 中的component
+    children: [
+      {
+        index: true, // index 表示当前路由是默认路由
+        element: <Article />,
+      }
+    ]
+  },
+
+])
+// 导出路由实例对象
+export default router
+```
+
+404 页面配置
+
+```tsx
+import { createBrowserRouter } from 'react-router-dom'
+
+import Home from '../pages/home'
+import Article from '../pages/article'
+// 创建路由实例对象
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />, // element 表示要渲染的组件 ，就是 vue 中的component
+    children: [
+      {
+        index: true, // index 表示当前路由是默认路由
+        element: <Article />,
+      }
+    ]
+  },
+  {
+    path: '*',
+    element: <div>404</div> // 表示 404 页面
+  }
+
+])
+// 导出路由实例对象
+export default router
+```
+
+#### 路由模式
+
+​	
 
 
 

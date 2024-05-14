@@ -1,46 +1,22 @@
-import { createContext, useContext } from 'react'
-//  1. 使用 createContext 创建一个上下文对象
-//  2. 定义一个 Provider 组件，用于提供数据,在顶层组件使用
-//  3. 在需要使用的地方通过 useContext 获取上下文中提供的对象，在需要使用数据的地方使用
-const Context = createContext('')
+// 自定义 hook
+import { useState } from 'react'
+// 把可复用的逻辑写在一个自定义的 hook 中，最后返回设定的值和方法，可以以数组或是对象的形式返回
+const useToggle = () => {
+  const [value, setValue] = useState(false)
+  const toggle = () => setValue(!value)
+  return [value, toggle]
+}
 
 const App = () => {
-  const msg = '父组件的数据'
+  // 使用自定义 hook
+  // 调用 useToggle 返回的值和方法
+  const [value, toggle] = useToggle()
   return (
     <div>
-      <Context.Provider value={ msg }>
-        父组件
-        <Son />
-      </Context.Provider>
+      <button onClick={toggle}>Toggle</button>
+      <div>{value && 'Hello World'}</div>
     </div>
   )
 }
 
-const Son = () => {
-  return (
-    <div>
-      子组件
-      <Grandson />
-    </div>
-  )
-}
-
-const Grandson = () => {
-  return (
-    <div>
-      孙子组件
-      <Lower />
-    </div>
-  )
-}
-
-const Lower = () => {
-  const value = useContext(Context)  // 使用 useContext 获取上下文中的数据
-  return (
-    <div>
-      底层组件
-      {value}
-    </div>
-  )
-}
 export default App
