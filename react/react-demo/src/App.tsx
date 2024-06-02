@@ -1,21 +1,20 @@
-// 自定义 hook
-import { useState } from 'react'
-// 把可复用的逻辑写在一个自定义的 hook 中，最后返回设定的值和方法，可以以数组或是对象的形式返回
-const useToggle = () => {
-  const [value, setValue] = useState(false)
-  const toggle = () => setValue(!value)
-  return [value, toggle]
-}
+import { useMemo, useState } from 'react'
+import './App.css'
 
 const App = () => {
-  // 使用自定义 hook
-  // 调用 useToggle 返回的值和方法
-  const [value, toggle] = useToggle()
+  const [count, setCount] = useState(1)
+  // useMemo 有两个参数，
+  // 第一个参数是一个计算函数，返回一个经过计算缓存之后的值
+  // 第二个参数是一个依赖数组，当依赖数组中的值发生变化时，才会重新计算缓存值
+
+  const double = useMemo(() => {
+    return count * 2
+  }, [count])
   return (
-    <div>
-      <button onClick={toggle}>Toggle</button>
-      <div>{value && 'Hello World'}</div>
-    </div>
+    <>
+      <button onClick={() => setCount(count + 1)}>double</button>
+      <div className='fs20'>{double}</div>
+    </>
   )
 }
 

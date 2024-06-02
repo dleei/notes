@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
         child: Text(
-      'Hello, world! 自定义组件',
+      'Hello, world!',
       textDirection: TextDirection.ltr,
       style: TextStyle(fontSize: 40, color: Colors.blue),
     ));

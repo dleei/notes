@@ -169,7 +169,7 @@ TypeScript 依赖 JavaScript 生态，需要用到很多外部模块。但是，
 
 总的来说，这些缺点使得 TypeScript 不一定适合那些小型的、短期的个人项目。
 
-## 起步安装
+## 起步安装搭建ts的开发环境
 
 tsc 是一个 npm 模块，使用下面的命令安装（必须先安装 node环境）。
 
@@ -391,6 +391,52 @@ tsc -p ./dir
 
 10.module
 默认common.js  可选es6模式 amd  umd 等
+
+
+
+#### 直接运行ts文件   ts-node/ts-node-dev
+
+当然，如果你主要是想执行 TypeScript 文件，就像 `node index.js` 这样快速地验证代码逻辑，这个时候你就需要 [ts-node](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FTypeStrong%2Fts-node) 以及 [ts-node-dev](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fwclr%2Fts-node-dev) 这一类工具了。它们能直接执行 ts 文件，并且支持监听文件重新执行
+
+```bash
+pnpm i ts-node -g
+```
+
+然后，在项目中执行以下命令创建 TypeScript 的项目配置文件： tsconfig.json
+
+```bash
+npx --package typescript tsc --init
+// 如果全局安装了 TypeScript，可以这么做
+tsc --init
+```
+
+接着，创建一个 TS 文件：
+
+```typescript
+console.log("Hello TypeScript");
+```
+
+再使用 ts-node 执行：
+
+```bash
+ts-node index.ts
+```
+
+ts-node 本身并不支持自动地监听文件变更然后重新执行，而这一能力又是某些项目场景下的刚需，如 NodeJs API 的开发。因此，我们需要 [ts-node-dev](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fwclr%2Fts-node-dev) 库来实现这一能力。ts-node-dev 基于 [node-dev](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Ffgnass%2Fnode-dev)（你可以理解一个类似 nodemon 的库，提供监听文件重新执行的能力） 与 [ts-node](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FTypeStrong%2Fts-node) 实现，并在重启文件进程时共享同一个 TS 编译进程，避免了每次重启时需要重新实例化编译进程等操作。
+
+首先，我们还是在全局安装：
+
+```bash
+npm i ts-node-dev -g
+```
+
+ts-node-dev 在全局提供了 `tsnd` 这一简写，你可以运行 `tsnd` 来检查安装情况。最常见的使用命令是这样的：
+
+```bash
+ts-node-dev --respawn --transpile-only app.ts
+```
+
+respawn 选项启用了监听重启的能力，而 transpileOnly 提供了更快的编译速度。你可以查看官方仓库来了解更多选项，但在大部分场景中以上这个命令已经足够了。
 
 ## 类型声明
 
@@ -1098,6 +1144,49 @@ gender: 男
 ### readonly属性
 
 表示里面的属性是只读的，不允许修改，修改会报错，一般会使用在后端返回的唯一id，或是定义的函数
+
+### rest 参数
+
+`rest` 参数允许你将不定数量的参数传递给函数，并将这些参数作为数组处理
+
+使用 `rest` 参数的语法是通过三个点 `...`
+
+```typescript
+function printNames(...names: string[]) {
+    names.forEach(name => {
+        console.log(name);
+    });
+}
+
+printNames("Alice", "Bob", "Charlie");
+// 输出:
+// Alice
+// Bob
+// Charlie
+
+```
+
+在上面的例子中，`printNames` 函数使用 `rest` 参数来接收任意数量的字符串参数，并将它们作为数组 `names` 处理
+
+#### 与其他参数结合使用
+
+`rest` 参数可以与其他参数结合使用，但必须是函数参数列表中的最后一个参数：
+
+```typescript
+function printMessage(message: string, ...names: string[]) {
+    console.log(message);
+    names.forEach(name => {
+        console.log(name);
+    });
+}
+
+printMessage("Hello everyone", "Alice", "Bob", "Charlie");
+// 输出:
+// Hello everyone
+// Alice
+// Bob
+// Charlie
+```
 
 ### 数组类型
 
