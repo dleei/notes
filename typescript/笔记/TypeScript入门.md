@@ -778,7 +778,7 @@ x = 'Hello World'; // 正确
 
 `unknown`类型跟`any`类型的不同之处在于，它不能直接使用。主要有以下几个限制。
 
-首先，`unknown`类型的变量，不能直接赋值给其他类型的变量（除了`any`类型和`unknown`类型）。
+首先，`unknown`类型的变量，<span style="color: red;">**不能直接赋值给其他类型的变量**</span>（除了`any`类型和`unknown`类型）。
 
 ```ts
 let v:unknown = 123;
@@ -1223,13 +1223,81 @@ let arr:number[][] = [[1],[2]]
 let arr:Array<Array<number>> = [[1],[2],[3]]
 ```
 
-### 大杂烩类型数组
+### 元组类型
+
+它表示成员类型可以自由设置的数组，即数组的各个成员的类型可以不同
+
+由于成员的类型可以不一样，所以元组必须明确声明每个成员的类型
 
 ```ts
-// 使用any类型定义
-let arr:any[] = [1,'123',true,null]
-// 元组类型定义
 let arr:[number,string,boolean,null] = [1,'123',true,null]
+```
+
+数组的成员类型写在方括号外面（`number[]`），元组的成员类型是写在方括号里面（`[number]`）。TypeScript 的区分方法就是，成员类型写在方括号里面的就是元组，写在外面的就是数组
+
+```ts
+数组
+const arr:string[] = [1]
+元组
+const t = [number] = [2]
+```
+
+元组成员的类型可以添加问号后缀（`?`），表示该成员是可选的。
+
+```ts
+let a:[number, number?] = [1];
+```
+
+上面示例中，元组`a`的第二个成员是可选的，可以省略。
+
+注意，问号只能用于元组的尾部成员，也就是说，所有可选成员必须在必选成员之后。
+
+```ts
+type myTuple = [
+  number,
+  number,
+  number?,
+  string?
+];
+```
+
+上面示例中，元组`myTuple`的最后两个成员是可选的。也就是说，它的成员数量可能有两个、三个和四个
+
+由于必须要单独声明每个元组成员的类型，所以元组成员的个数是有限的，当访问越界的时候就会出现报错
+
+```ts
+let x:[string, string] = ['a', 'b'];
+
+x[2] = 'c'; // 报错
+```
+
+使用扩展运算符（`...`），可以表示不限成员数量的元组
+
+```ts
+type NamedNums = [
+  string,
+  ...number[]
+];
+
+const a:NamedNums = ['A', 1, 2];
+const b:NamedNums = ['B', 1, 2, 3];
+```
+
+元组类型`NamedNums`的第一个成员是字符串，后面的成员使用扩展运算符来展开一个数组，从而实现了不定数量的成员
+
+如果不确定元组成员的类型和数量，可以写成下面这样。
+
+```ts
+type Tuple = [...any[]];
+```
+
+上面示例中，元组`Tuple`可以放置任意数量和类型的成员。但是这样写，也就失去了使用元组和 TypeScript 的意义
+
+元组可以通过方括号，读取成员类型。
+
+```ts
+type Tuple = [string, number];
+type Age = Tuple[1]; // number
 ```
 
 ### 函数类型定义
@@ -1246,19 +1314,108 @@ return a+b
 const add(a:number,b:number = 1):number => a + b
 ```
 
+如果一个变量要套用另一个函数类型，有一个小技巧，就是使用`typeof`运算符。
+
+```ts
+function add(
+  x:number,
+  y:number
+) {
+  return x + y;
+}
+
+const myAdd:typeof add = function (x, y) {
+  return x + y;
+}
+```
+
+上面示例中，函数`myAdd()`的类型与函数`add()`是一样的，那么就可以定义成`typeof add`。因为函数名`add`本身不是类型，而是一个值，所以要用`typeof`运算符返回它的类型。
+
+
+
 ### 联合类型
 
 联合类型（union types）指的是多个类型组成的一个新类型，使用符号`|`表示，小飞棍来喽！
 
-![](./../assets/%E6%88%91%E5%85%A8%E9%83%BD%E8%A6%81.webp)
-
-联合类型`A|B`表示，任何一个类型只要属于`A`或`B`，就属于联合类型`A|B`
+联合类型`A|B`表示，任何一个类型只要属于`A`或`B`，就属于联合类型`A|B`，条件就是只要是满足其中一个条件就可以
 
 ```ts
 let phone:string | number = 123456 // 变量的类型同时支持字符串和数字
 ```
 
+联合类型常常会和值类型一起使用，表示一个变量的值有若干种可能
+
+```ts
+let setting:true|false;
+
+let gender:'male'|'female';
+
+let rainbowColor:'赤'|'橙'|'黄'|'绿'|'青'|'蓝'|'紫';
+```
+
+我们有时在package.json文件配置时，输入后自动出现下拉选项就是这样实现的
+
+![](./../assets/%E8%81%94%E5%90%88%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E7%B1%BB%E5%9E%8B.png)
+
+联合类型的第一个成员前面，也可以加上竖杠`|`，这样便于多行书写。
+
+```ts
+let x:
+  | 'one'
+  | 'two'
+  | 'three'
+  | 'four';
+```
+
+如果一个变量有多种类型，读取该变量时，往往需要进行“类型缩小”（type narrowing），区分该值到底属于哪一种类型，然后再进一步处理。
+
+```ts
+function printId(
+  id:number|string
+) {
+    console.log(id.toUpperCase()); // 报错
+}
+```
+
+上面示例中，参数变量`id`可能是数值，也可能是字符串，这时直接对这个变量调用`toUpperCase()`方法会报错，因为这个方法只存在于字符串，不存在于数值。
+
+解决方法就是对参数`id`做一下类型缩小，确定它的类型以后再进行处理。
+
+```ts
+function printId(
+  id:number|string
+) {
+  if (typeof id === 'string') {
+    console.log(id.toUpperCase());
+  } else {
+    console.log(id);
+  }
+}
+```
+
+上面示例中，函数体内部会判断一下变量`id`的类型，如果是字符串，就对其执行`toUpperCase()`方法。
+
+“类型缩小”是 TypeScript 处理联合类型的标准方法，凡是遇到可能为多种类型的场合，都需要先缩小类型，再进行处理。实际上，联合类型本身可以看成是一种“类型放大”（type widening），处理时就需要“类型缩小”（type narrowing）
+
 ### 交叉类型
+
+交叉类型（intersection types）指的多个类型组成的一个新类型，使用符号`&`表示。
+
+交叉类型`A&B`表示，任何一个类型必须同时属于`A`和`B`，才属于交叉类型`A&B`，即交叉类型同时满足`A`和`B`的特征。
+
+```ts
+let x:number&string;
+```
+
+上面示例中，变量`x`同时是数值和字符串，这当然是不可能的，所以 TypeScript 会认为`x`的类型实际是`never`。
+
+就像是一个人的性别不可能同时满足男和女一样
+
+交叉类型的主要用途是表示对象的合成。
+
+![](./../assets/%E6%88%91%E5%85%A8%E9%83%BD%E8%A6%81.webp)
+
+简来来说就是往一个对象中添加新的属性
 
 ```ts
 interface People {
@@ -1286,11 +1443,66 @@ fn('1234') // 4
 fn(12345)  // 在执行调用的时候并不会给予报错提示，类型断言可以欺骗编译器，无法避免运行时的错误，谨慎使用
 ```
 
+### typeof 运算
+
+在js中typeof 用来判断一个数据类型是否属于基本数据类型，并返回对应的操作数的类型的一个字符串
+
+```ts
+const a = 1
+console.log(typeof a) // 'number'
+```
+
+使用 `typeof` 检测变量 a 返回的是 number，表示 a 的数据类型为数字
+
+JavaScript 里面，`typeof`运算符只可能返回八种结果，而且都是字符串。
+
+```ts
+typeof undefined; // "undefined"
+typeof true; // "boolean"
+typeof 1337; // "number"
+typeof "foo"; // "string"
+typeof {}; // "object"
+typeof parseInt; // "function"
+typeof Symbol(); // "symbol"
+typeof 127n // "bigint"
+```
+
+而在 `typescript` 中 `typeof` 返回的不是一个字符串，而是该值对应的 `typescript` 类型
+
+```ts
+const a = { x: 0 };
+
+type T0 = typeof a;   // { x: number }
+type T1 = typeof a.x; // number
+```
+
+`typeof a`表示返回变量`a`的 TypeScript 类型（`{ x: number }`）。同理，`typeof a.x`返回的是属性`x`的类型（`number`）
+
+也就是说，同一段代码可能存在两种`typeof`运算符，一种用在值相关的 JavaScript 代码部分，另一种用在类型相关的 TypeScript 代码部分。
+
+```ts
+let a = 1;
+let b:typeof a;
+
+if (typeof a === 'number') {
+  b = a;
+}
+```
+
+上面示例中，用到了两个`typeof`，第一个是类型运算，第二个是值运算。它们是不一样的，不要混淆。
+
+JavaScript 的 typeof 遵守 JavaScript 规则，TypeScript 的 typeof 遵守 TypeScript 规则。它们的一个重要区别在于，编译后，前者会保留，后者会被全部删除。
+
 ### 内置对象
 
 ECMAscript内置对象
 
-Boolean Number String RegExp Date Error
+- Boolean 
+- Number 
+- String 
+- RegExp 
+- Error
+- Date 
 
 ```ts
 let b: Boolean = new Boolean(1)
@@ -1309,7 +1521,10 @@ console.log(e)
 
 Dom和Bom内置对象
 
-Document、HTMLElement、Event、NodeList等
+- Document
+- HTMLElement
+- Event
+- NodeList 等
 
 ```ts
 let body: HTMLElement = document.body;
@@ -1550,15 +1765,15 @@ return(1,2) // [1,2]
 return('1','5') // ['1','5']
 
 // 泛型优化
-语法为函数名后加一个<参数名> ，这里的参数名可以是任意的，这里就用 T 来代替，表示 type 的意思
+// 语法为函数名后加一个<参数名> ，这里的参数名可以是任意的，这里就用 T 来代替，表示 type 的意思
 const returnArr<T> = (a:T,b:T):T => {
 return [a,b]
 }
-在我们调用的时候把参数的类型传递进去就可以了，就实现了动态的类型
+// 在我们调用的时候把参数的类型传递进去就可以了，就实现了动态的类型
 returnArr<number>(1,2)
 returnArr<string>('1','6')
 
-也可以同时使用多个泛型参数，只要是数量和使用方式能对应上就行
+// 也可以同时使用多个泛型参数，只要是数量和使用方式能对应上就行
 const returnArr<T,A> = (a:T,b:A):(T|A)[]=> {
     const result:(T|A)[] = [a,b]
     return result

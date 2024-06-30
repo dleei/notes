@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only src/index.ts"
   },
+  "type": ,
   "keywords": [],
   "author": "",
   "license": "ISC"
