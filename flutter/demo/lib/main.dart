@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         child: Text(
       'Hello, world!',
       textDirection: TextDirection.ltr,
-      style: TextStyle(fontSize: 40, color: Colors.blue),
+      style: TextStyle(fontSize: 45, color: Colors.purple),
     ));
   }
 }
