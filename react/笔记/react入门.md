@@ -238,6 +238,8 @@ const button = <button>我是按钮</button>
 </script>
 ```
 
+​	
+
 > 注意：
 >
 > - jsx不是字符串，不要加引号
@@ -488,11 +490,15 @@ const App = () => {
 
 同样你也可以选择使用解构，如果你愿意的话
 
-### 组件通讯
+## 组件通讯
 
-#### 父向子通讯
+### 父向子通讯
 
-##### 传递字符串，变量
+> react中不支持子向父传值
+>
+> 传递给子组件的数据是只读的，不允许进行修改
+
+#### 传递字符串，变量
 
 ```tsx
 const App = () => {
@@ -504,12 +510,12 @@ const App = () => {
         <User
           name='张三'
           text={text}
-        />
+        /> // 在父组件中使用属性向子组件传值
       </div>
     </>
   )
 }
-在子组件中可以使用porps进行接收或是对其进行解构渲染
+// 在子组件中可以使用 porps 进行接收或是对其进行解构渲染，结果是以对象的形式进行包裹
 const User = ({ name, text }) => {
   return (
     <>
@@ -522,9 +528,9 @@ const User = ({ name, text }) => {
 export default App
 ```
 
-##### 传递函数，事件
+#### 传递函数，事件
 
-###### 事件
+#### 事件
 
 ```tsx
 const App = () => {
@@ -551,7 +557,7 @@ const App = () => {
 export default App
 ```
 
-###### 自定义函数
+#### 自定义函数
 
 ```tsx
 const App = () => {
@@ -618,37 +624,141 @@ const Child = ({ name, age, gender, address, hobby }) => {
 export default App
 ```
 
-#### 子向父通讯
+#### 特殊的children属性
+
+当内容嵌套在子组件中的标签中时，父组件会在children属性中进行接收
 
 ```tsx
-const App = () => {
-  const getData = data => { // 定义了一个函数用于打印接收到的变量
-    console.log(data)
-  }
-  return (
-    <div>
-      <h1>父组件</h1>
-      <Child getData={ getData } /> // 向子组件发送了一个函数用于更改或是显示父组件中的数据
-    </div>
+const Son = ({children}) => {
+  return(
+    <div>{children}</div>
   )
 }
-// 使用解构接收父组件的函数
-const Child = ({ getData }) => {
-  const text = '来自遥远的子组件的数据' // 子组件中的数据
-  const sendData = () => { // 子组件中的方法
-    getData(text) // 调用父组件中的方法传递数据，用于更改父组件中的状态
-  }
 
+const App = () => {
   return (
-    <div>
-      <h1>子组件</h1>
-      <button onClick={ sendData }>点击</button> // 点击触发子组件中的事件函数
-    </div>
+    <>
+      <Son>
+        <div>子组件中的数据</div>
+      </Son>
+    </>
+  )
+}
+
+export default App
+
+```
+
+
+
+### 子向父通讯
+
+```tsx
+// 父组件
+import { useState } from 'react'
+import Son from './Son'
+
+const App = () => {
+  const [msg, setMsg] = useState('hello')
+  const getMsg = msg => {
+    setMsg(msg)
+  }
+  return (
+    <>
+      <div>
+        <span>{msg}</span>
+        <Son onGetMsg={getMsg} />
+      </div>
+    </>
   )
 }
 
 export default App
 ```
+
+
+
+```tsx
+// 子组件
+ // 在子组件中调用父组件的函数并传递实参
+ const Son = ({onGetMsg}) => {
+  const msgText: String = 'hello world'
+  return (
+    <>
+      <div>
+        this is Son: 
+        <button onClick={()=>onGetMsg(msgText)}>send</button>
+      </div>
+    </>
+  )
+}
+
+export default Son
+```
+
+### 兄弟组件通讯（也就是下面案例中的组件共享数据）
+
+借助状态提升，通过数据下放，实现兄弟组件之间的数据通讯
+
+在a页面点击发送数据到父组件，再由父组件传递数据给b页面实现数据传递
+
+```tsx
+// 父组件
+import { useState } from 'react'
+import A from './A'
+import B from './B'
+
+const App = () => {
+  const [msg, setMsg] = useState("")
+
+  const getMsg = (text)=> {
+    setMsg(text)
+  }
+
+  return (
+    <>
+    <A onGetMsg={getMsg} />
+    <B msg={msg}/>
+    </>
+  )
+}
+
+export default App
+
+```
+
+
+
+```tsx
+// a页面
+const A  = ({onGetMsg})=> {
+  const aText = 'this is a text'
+  return (
+    <>
+    <div>page a</div>
+    <button onClick={()=> onGetMsg(aText)}>send</button>
+    </>
+  )
+}
+
+export default A; // export default A;
+```
+
+```tsx
+// b 页面
+const B  = ({msg})=> {
+  return (
+    <>
+    <div>page b</div>
+    <div>a 页面的数据：{msg}</div>
+    </>
+  )
+}
+
+export default B; // export default B;
+```
+
+
 
 #### 传递设置默认值
 
@@ -1031,7 +1141,7 @@ const App = () => {
   const msg = '父组件的数据'
   return (
     <div>
-      <Context.Provider value={ msg }>
+      <Context.Provider value={ msg }> // 顶层组件提供数据
         父组件
         <Son />
       </Context.Provider>
@@ -1096,13 +1206,35 @@ const App = () => {
 export default App
 ```
 
-### ReactRouter
+### redux
+
+可以理解为vue中的vuex和pinia，进行集中式状态管理
+
+redux toolkit 官方推荐redux逻辑的方式，是一套工具集，简化书写方式
+
+![image-20240726221942857](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/image-20240726221942857.png)
+
+react-redux 用来链接react组件和redux的中间件
+
+![image-20240726222111722](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/image-20240726222111722.png)
+
+安装插件
+
+```bash
+pnpm i @reduxjs/toolkit react-redux
+```
+
+
+
+## ReactRouter
 
 安装 react-router-dom 包
 
-```tsx
+```bash
 pnpm i react-router-dom
 ```
+
+
 
 ```tsx
 import React from 'react'
@@ -1139,11 +1271,11 @@ const router = createBrowserRouter([
 export default router
 ```
 
-#### 路由跳转
+### 路由跳转
 
 编程式导航
 
-使用 `useNavigate`
+使用 `useNavigate` 可以理解为 vue 中的 router.push()方法
 
 ```tsx
 import { Link , useNavigate} from "react-router-dom"
@@ -1152,7 +1284,7 @@ const Home = () => {
    const navigate = useNavigate()
   return (
     <div>
-      <Link to="/article">article</Link>
+      <Link to={"/article"}>article</Link>
       <h1>home</h1>
       <button onClick={() => navigate('/article')}>去文章页面</button>
     </div>
@@ -1172,7 +1304,7 @@ import { Link } from "react-router-dom"
 const Home = () => {
   return (
     <div>
-      <Link to="/article">article</Link>
+      <Link to={"/article"}>article</Link>
       <h1>home</h1>
     </div>
   )
@@ -1182,22 +1314,43 @@ export default Home
 
 
 
-#### 路由传参
+### 路由传参
 
-useParams传参
+searchParams传参
 
 ```tsx
+// 首页
+import { useNavigate, Link } from 'react-router-dom'
+
+const home = () => {
+  const navigate = useNavigate()
+  return (
+    <div>
+      <h1>Home</h1>
+      <button onClick={() => navigate('/article?id=1001&name=react')}>去文章页</button>
+    </div>
+  )
+}
+
+export default home
+```
+
+
+
+```tsx
+// 详情页
 import { Link } from 'react-router-dom'
-// 使用了useSearchParams钩子来获取URL中的查询参数。useSearchParams返回一个数组，其中第一个元素是SearchParams对象，第二个元素是一个函数，用于更新查询参数
 import { useSearchParams } from 'react-router-dom'
+// 使用了useSearchParams钩子来获取URL中的查询参数。useSearchParams返回一个数组，其中第一个元素是SearchParams对象，第二个元素是一个函数，用于更新查询参数
 const Article = () => {
   const [params] = useSearchParams()
-  const id = params.get('id')
+  const id = params.get('id') // 通过get方法获取参数
+  const name = params.get('name')
   return (
     <div>
       <Link to='/home'>回到首页</Link>
       <h1>article</h1>
-      <p>{id}</p>
+      <p>id:{id}--name:{name}</p>
     </div>
   )
 }
@@ -1207,25 +1360,53 @@ export default Article
 params传参
 
 ```tsx
-import { Link } from 'react-router-dom'
-import { useParams } from 'react-router-dom'
+// 首页
+import { useNavigate, Link } from 'react-router-dom'
+
+const home = () => {
+  const navigate = useNavigate()
+  return (
+    <div>
+      <h1>Home</h1>
+      <button onClick={() => navigate('/article/1002/react')}>去文章页</button>
+    </div>
+  )
+}
+
+export default home
+```
+
+去到路由的位置，加上占位符
+
+```tsx
+const router = createBrowserRouter([
+    { path: '/article/:id/:tile', element: <Article /> }
+])
+```
+
+
+
+```tsx
+// 详情页
+import { Link,useParams } from 'react-router-dom'
 const Article = () => {
   const params = useParams()
   const id = params.id // params 是通过.语法来获取传递的参数
+  const name = params.name
   return (
     <div>
       <Link to='/home'>回到首页</Link>
       <h1>article</h1>
-      <p>{id}</p>
+      <p>id:{id}----name:{name}</p>
     </div>
   )
 }
 export default Article
 ```
 
+### 嵌套路由
 
-
-#### 嵌套路由
+使用children表示对应的二级路由地址
 
 ```tsx
 import { createBrowserRouter } from 'react-router-dom'
@@ -1250,7 +1431,7 @@ const router = createBrowserRouter([
 export default router
 ```
 
-
+在要渲染二级路由的地方，放置 Outlet 标签，和vue中的 view-router 是一个意思
 
 ```tsx
 import { Link , Outlet} from "react-router-dom" // outlet 表示占位符,表示二级路由的渲染位置
@@ -1268,7 +1449,7 @@ export default Home
 
 ```
 
-默认显示二级路由
+### 默认显示二级路由
 
 去掉二级路由的 path 属性替换为 index：true
 
@@ -1352,6 +1533,3 @@ export default router
 
 
 
-
-
--

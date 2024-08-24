@@ -28,13 +28,13 @@
 
 打开`微PE`的官网，选择下载自己电脑对应的工具包
 
-<img src="./assets/%E5%BE%AEPE%E5%AE%98%E7%BD%91.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%BE%AEPE%E5%AE%98%E7%BD%91.png" style="zoom:50%;" />
 
 和之前一样，本地电脑下载完工具包之后，插入U盘，在电脑上打开工具包，在右下角选择把`PE`安装进U盘内
 
-<img src="./assets/%E6%89%93%E5%BC%80%E5%B7%A5%E5%85%B7%E5%8C%85.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/打开工具包.png" style="zoom:50%;" />
 
-<img src="./assets/%E5%AE%89%E8%A3%85%E8%BF%9BU%E7%9B%98.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%AE%89%E8%A3%85%E8%BF%9BU%E7%9B%98.png" style="zoom:50%;" />
 
 注意查看待写入U盘是否为你插入的U盘 :eyes:
 
@@ -52,11 +52,11 @@ U盘卷标就是修改U盘的名称
 
 点击开始制作就会自动进行PE的安装了，这里大概会花费3~10分钟，依据U盘性能不同，看你U盘读写速度有多快了，耐心等待一下
 
-<img src="./assets/%E5%BC%80%E5%A7%8B%E5%88%B6%E4%BD%9C%E5%90%AF%E5%8A%A8%E7%9B%98.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%BC%80%E5%A7%8B%E5%88%B6%E4%BD%9C%E5%90%AF%E5%8A%A8%E7%9B%98.png" style="zoom:50%;" />
 
 安装完成
 
-<img src="./assets/PE%E6%88%90%E5%8A%9F%E5%AE%89%E8%A3%85%E8%BF%9BU%E7%9B%98.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/PE%E6%88%90%E5%8A%9F%E5%AE%89%E8%A3%85%E8%BF%9BU%E7%9B%98.png" style="zoom:50%;" />
 
 打开U盘你会发现，U盘被分为了两个分区，一个EFI分区一个微`PE`工具箱
 
@@ -64,13 +64,13 @@ U盘卷标就是修改U盘的名称
 
 微`PE`工具箱是我们安装`PE`系统时给我们的U盘重命名为了微`PE`工具箱，可以拿来当普通U盘来使用
 
-<img src="./assets/PE%E5%B7%A5%E5%85%B7%E7%AE%B1.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/PE%E5%B7%A5%E5%85%B7%E7%AE%B1.png" style="zoom:50%;" />
 
 > 有时EFI分区会被自动隐藏，只有一个空白分区，为正常现象
 
 下面下载win10的安装包，可以和前一篇的官方ISO镜像安装的教程一样去微软官网下载或者是去[MSDN](https://next.itellyou.cn/)下载微软官方的`ISO`镜像文件，而且版本和更新补丁包非常的详细
 
-<img src="./assets/MSDN.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/MSDN.png" style="zoom:50%;" />
 
 将下载好的`iso`镜像文件拖进u盘内 
 
@@ -78,7 +78,7 @@ U盘卷标就是修改U盘的名称
 
 成功进入微PE系统主界面
 
-![](./assets/%E5%BE%AEPE%E6%A1%8C%E9%9D%A2.png)
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%BE%AEPE%E6%A1%8C%E9%9D%A2.png)
 
 既然使用了PE系统就不要再使用微软官方的蹩脚的命令行切换分区了
 
@@ -86,7 +86,7 @@ U盘卷标就是修改U盘的名称
 
 这个空闲的未被分区的硬盘就是我们的电脑的512G固态硬盘，下面对它进行分区操作
 
-<img src="./assets/%E5%88%86%E5%8C%BA%E7%B2%BE%E7%81%B5%EF%BC%8C%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%88%86%E5%8C%BA%E7%B2%BE%E7%81%B5%EF%BC%8C%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA.png" style="zoom:50%;" />
 
 > 分区前注意查看分区表类型
 >
@@ -98,15 +98,15 @@ U盘卷标就是修改U盘的名称
 
 右键需要更改分区的磁盘点击切换为GUID格式
 
-![](./assets/%E5%88%87%E6%8D%A2GUID%E6%A0%BC%E5%BC%8F.png)
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%88%87%E6%8D%A2GUID%E6%A0%BC%E5%BC%8F.png)
 
 保存更改
 
-![](./assets/%E4%BF%9D%E5%AD%98%E6%9B%B4%E6%94%B9.png)
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E4%BF%9D%E5%AD%98%E6%9B%B4%E6%94%B9.png)
 
 更改完毕
 
-![](./assets/%E6%9B%B4%E6%94%B9%E5%AE%8C%E6%AF%95.png)
+![](https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E6%9B%B4%E6%94%B9%E5%AE%8C%E6%AF%95.png)
 
 legacy引导模式同理
 
@@ -114,7 +114,7 @@ legacy引导模式同理
 
 右键需要分区的磁盘，点击快速分区
 
-<img src="./assets/%E5%BC%80%E5%A7%8B%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA.png" alt="分区" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%BC%80%E5%A7%8B%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA.png" alt="分区" style="zoom:50%;" />
 
 自行选择分区个数以及盘符名称，我们的系统盘C盘建议100~120G之间
 
@@ -124,11 +124,11 @@ legacy引导模式同理
 
 分区完成 
 
-<img src="./assets/%E5%88%86%E5%8C%BA%E5%AE%8C%E6%88%90.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%88%86%E5%8C%BA%E5%AE%8C%E6%88%90.png" style="zoom:50%;" />
 
 分区完成后，打开U盘内的系统镜像右键装载，之后的流程和官方ISO镜像安装一样这里就不再过多赘述
 
-<img src="./assets/%E5%8F%B3%E9%94%AE%E8%A3%85%E8%BD%BD.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/hehuan2023/pic/typora/%E5%8F%B3%E9%94%AE%E8%A3%85%E8%BD%BD.png" style="zoom:50%;" />
 
 如需安装其他系统可在该位置存放别的系统镜像文件
 
