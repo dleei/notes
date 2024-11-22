@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Put,
+  Query,
   Param,
   Delete,
   UseInterceptors,
@@ -28,8 +29,8 @@ export class BookController {
   }
 
   @Get('list')
-  async list() {
-    return this.bookService.list();
+  async list(@Query('name') name: string){
+    return this.bookService.list(name);
   }
 
   @Get(':id')
@@ -67,8 +68,6 @@ export class BookController {
     }),
   )
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log('file', file);
-
     return file.path;
   }
 }

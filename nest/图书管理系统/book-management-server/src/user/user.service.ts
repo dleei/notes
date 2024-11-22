@@ -26,7 +26,7 @@ export class UserService {
         users.push(user);
 
         await this.dbService.write(users);
-        return user;
+        return { status: 200, message: '注册成功',data: 'Success'}; 
     }
     
     async login(loginUserDto: LoginUserDto) {
@@ -42,7 +42,7 @@ export class UserService {
           throw new BadRequestException('密码不正确');
       }
   
-      return foundUser;
+      return { status: 200, message: '登录成功',data: 'Success'}; 
   }
   
 }

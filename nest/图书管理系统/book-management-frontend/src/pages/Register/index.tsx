@@ -13,17 +13,15 @@ const layout2 = {
   wrapperCol: { span: 24 },
 }
 
-
-
-const  onFinish = async (val: RegisterUser) => {
+const onFinish = async (val: RegisterUser) => {
   if (val.password !== val.confirmPassword) {
     message.error('两次密码不一致')
     return
   }
-  const {  status } = await toRegister(val)
-  if(status === 200 || status === 201) {
+  const { status } = await toRegister(val)
+  if (status === 200 || status === 201) {
     message.success('注册成功')
-    
+
     // 跳转到登录页
     window.location.href = '/login'
   }

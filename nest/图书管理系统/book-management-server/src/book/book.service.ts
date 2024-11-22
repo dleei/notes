@@ -10,9 +10,9 @@ const randomNum = () => Math.floor(Math.random() * 1000000);
 export class BookService {
   @Inject()
   DbService: DbService;
-  async list() {
+  async list(name: string) {
     const books: Array<Book> = await this.DbService.read();
-    return books;
+    return name ? books.filter((book) => book.name.includes(name)) : books;
   }
 
   async findById(id: number) {
