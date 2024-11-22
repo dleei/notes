@@ -54,7 +54,7 @@ export class BookController {
       dest: 'upload',
       storage: storage,
       limits: {
-        fileSize: 1024 * 1024 * 5, // 5MB
+        fileSize: 1024 * 1024 * 5, 
       },
       fileFilter: (req, file, cb) => {
         const extName = path.extname(file.originalname);
