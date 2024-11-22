@@ -10,22 +10,22 @@ export class UserController {
   /**
    * @description  用户注册
    * @params registerDto 用户注册信息
-   * @returns  
+   * @returns
    */
 
   @Post('register')
   register(@Body() registerDto: RegisterUserDto) {
     return this.userService.register(registerDto);
   }
-  
+
   /**
    * @description  用户登录
    * @param loginUserDto 用户登录
-   * @returns 
+   * @returns
    */
-  
+
   @Post('login')
-  login(@Body()loginUserDto: LoginUserDto) {
+  login(@Body() loginUserDto: LoginUserDto) {
     return this.userService.login(loginUserDto);
   }
 }

@@ -22,6 +22,7 @@ export class UserService {
         const user = new User();
         user.username = registerUserDto.username;
         user.password = registerUserDto.password;
+        user.confirmPassword = registerUserDto.confirmPassword;
         users.push(user);
 
         await this.dbService.write(users);
