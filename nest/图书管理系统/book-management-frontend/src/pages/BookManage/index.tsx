@@ -1,8 +1,10 @@
-import { Button, Card, Form, Input } from 'antd'
+import { Button, Card, Form, Input, Popconfirm, message } from 'antd'
 import type { Book } from '../../types/books'
 import { useEffect, useState } from 'react'
-import { getBookList } from '../../apis/book'
+import { getBookList, delBook } from '../../apis/book'
+import { CreateBookModel } from './CreateBookModel'
 import './index.css'
+import { UpdateBookModal } from './UpdateBookModal'
 
 const baseUrl: string =
   import.meta.env.MODE === 'development'
@@ -12,28 +14,73 @@ const baseUrl: string =
 export function BookManage() {
   const [books, setBooks] = useState<Array<Book>>([])
 
+  const [updateId, setUpdateId] = useState(0)
+  const [isUpdateBookModalOpen, setUpdateBookModalOpen] = useState(false)
+
   const [name, setName] = useState('')
+  const [isCreateBookModalOpen, setCreateBookModalOpen] = useState(false)
 
+  const [num, setNum] = useState(0)
+  // 获取图书列表
   const fetchBookList = async () => {
-    // const { data, status } = await getBookList(name)
-    const res = await getBookList(name) 
-    console.log(res)
+    const data = await getBookList(name)
 
-    /*    if (status === 200 || status === 201) {
-      setBooks(data)
-    } */
+    setBooks(data)
+  }
+  // 图书搜索
+  const handleSearch = async (val: { name: string }) => {
+    await setName(val.name)
+  }
+  // 创建图书model关闭
+  const handleModelClose = () => {
+    setCreateBookModalOpen(false)
+    setName('')
+    setNum(Math.random())
+  }
+  // 更新图书model关闭
+  const handleUpdateBookModalClose = () => {
+    setUpdateBookModalOpen(false)
+    setName('')
+    setNum(Math.random())
+  }
+  // 编辑图书
+  const editBook = (id: number) => {
+    setUpdateId(id)
+    setUpdateBookModalOpen(true)
   }
 
-  const handleSearch = async (val: { name: string }) => {
-   await setName(val.name)
+  // 图书详情
+  const getBookDetail = async (id: number) => {
+    setUpdateId(id)
+    setUpdateBookModalOpen(true)
+  }
+
+  // 删除图书
+  const handleDelete = async (id: number) => {
+    const { status } = await delBook(id)
+    if (status === 200 || status === 201) {
+      message.success('删除成功')
+
+      setNum(Math.random())
+    }
+    //  console.log(res)
   }
 
   useEffect(() => {
     fetchBookList()
-  }, [name])
+  }, [name, num])
 
   return (
     <div className='bookManage'>
+      <CreateBookModel
+        isOpen={isCreateBookModalOpen}
+        handleClose={handleModelClose}
+      />
+      <UpdateBookModal
+        id={updateId}
+        isOpen={isUpdateBookModalOpen}
+        handleClose={handleUpdateBookModalClose}
+      />
       <h1>图书管理系统</h1>
       <div className='content'>
         <div className='book-search'>
@@ -57,7 +104,10 @@ export function BookManage() {
               <Button
                 type='primary'
                 htmlType='submit'
-                style={{ background: 'green' }}>
+                style={{ background: 'green' }}
+                onClick={() => {
+                  setCreateBookModalOpen(true)
+                }}>
                 添加图书
               </Button>
             </Form.Item>
@@ -80,9 +130,28 @@ export function BookManage() {
                 <h2>{book.name}</h2>
                 <div>{book.author}</div>
                 <div className='links'>
-                  <a href='#'>详情</a>
-                  <a href='#'>编辑</a>
-                  <a href='#'>删除</a>
+                  <a
+                    href='#'
+                    onClick={() => {
+                      getBookDetail(book.id)
+                    }}>
+                    详情
+                  </a>
+                  <a
+                    href='#'
+                    onClick={() => {
+                      editBook(book.id)
+                    }}>
+                    编辑
+                  </a>
+                  <Popconfirm
+                    title='删除图书'
+                    description='确定删除该图书吗？'
+                    onConfirm={() => handleDelete(book.id)}
+                    okText='确定'
+                    cancelText='取消'>
+                    <a href='#'>删除</a>
+                  </Popconfirm>
                 </div>
               </Card>
             )

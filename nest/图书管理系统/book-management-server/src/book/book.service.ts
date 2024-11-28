@@ -18,7 +18,9 @@ export class BookService {
   async findById(id: number) {
     const books: Array<Book> = await this.DbService.read();
 
-    return books.find((book) => book.id === id);
+    const result = books.find((book) => book.id === id);
+
+    return { status: 200, data: result };
   }
 
   async create(createBookDto: CreateBookDto) {
@@ -34,7 +36,7 @@ export class BookService {
     books.push(book);
 
     await this.DbService.write(books);
-    return book;
+    return { status: 'Success', data: book };
   }
 
   async update(updateBookDto: UpdateBookDto) {
@@ -57,11 +59,9 @@ export class BookService {
 
   async delete(id: number) {
     const books: Book[] = await this.DbService.read();
-    const index = books.findIndex((book) => book.id === id);
+    const filterBooks = books.filter((book) => book.id !== id);
 
-    if (index !== -1) {
-      books.splice(index, 1);
-      await this.DbService.write(books);
-    }
+    await this.DbService.write(filterBooks);
+    return { status: 200, message: '删除成功' };
   }
 }

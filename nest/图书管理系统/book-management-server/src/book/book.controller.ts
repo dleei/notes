@@ -33,7 +33,7 @@ export class BookController {
     return this.bookService.list(name);
   }
 
-  @Get(':id')
+  @Get('detail/:id')
   findOne(@Param('id') id: string) {
     return this.bookService.findById(+id);
   }
