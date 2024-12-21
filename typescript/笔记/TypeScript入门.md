@@ -1331,7 +1331,33 @@ const myAdd:typeof add = function (x, y) {
 
 上面示例中，函数`myAdd()`的类型与函数`add()`是一样的，那么就可以定义成`typeof add`。因为函数名`add`本身不是类型，而是一个值，所以要用`typeof`运算符返回它的类型。
 
+### 函数调用签名
 
+```typescript
+//函数类型表达式
+
+type Add = (x: number, y: number) => number
+
+// 这里的 addNumber 就是一个函数类型表达式,类型是 Add 是一个函数类型*
+
+const addNumber: Add = (a, b) => a + b
+
+// 函数调用签名
+
+// 在JavaScript中函数除了可以被调用, 也是可以有自己的属性的 , 比如 length, name 等等, 但是在TypeScript中函数除了可以被调用, 还可以有自己的类型, 这个类型就是函数调用签名
+
+// 函数调用签名用来描述一个函数如何被调用, 也就是函数的参数列表和返回值类型
+
+// 函数调用签名语法
+
+// (参数列表): 返回值类型
+
+interface AddFunc {
+ (x: number, y: number): number
+ name: string
+ type: string
+}
+```
 
 ### 联合类型
 
@@ -1747,6 +1773,87 @@ function liveDangerously(x?: number | null) {
 }
 ```
 
+### 类型守卫（类型缩小）
+
+类型缩小的英文是Type Narrowing (也有人翻译为类型守卫或是类型收窄)
+
+类型缩小是指在某个条件下，将一个类型缩小为更具体的类型
+
+类型缩小的常见方式有：
+
+1. `typeof` 运算符：通过 `typeof` 运算符可以判断一个变量的类型，从而缩小类型范围。
+
+```typescript
+const printID = (id: number | string) => {
+
+ if (typeof *id* === 'string') {
+  console.log(*id*.toUpperCase()) *// id 在这里被缩小为 string 类型 , 可以调用 string 类型的方法 , 比如 toUpperCase, toLowerCase, trim 等等*
+ } else {
+  console.log(*id*++) *// id 在这里被缩小为 number 类型 , 可以调用 number 类型的方法*
+ }
+
+}
+```
+
+2. instanceof 运算符：通过 instanceof 运算符可以判断一个变量是否是某个类的实例，从而缩小类型范围。
+
+```typescript
+const printDate = (*date*: Date | string) => {
+ if (*date* instanceof Date) {
+  console.log(*date*.toISOString()) *// date 在这里被缩小为 Date 类型 , 可以调用 Date 类型的方法*
+ } else {
+  console.log(*date*) *// date 在这里被缩小为 string 类型*
+ }
+}
+```
+
+3. in 运算符：通过 in 运算符可以判断一个属性是否存在于一个对象中，从而缩小类型范围。
+
+```typescript
+interface Fish {
+ swim: () => void
+}
+
+interface Bird {
+ fly: () => void
+}
+
+const move = (animal: Fish | Bird) => {
+ if ('swim' in animal) {
+  animal.swim() // animal 在这里被缩小为 Fish 类型 , 可以调用 Fish 类型的方法
+ } else {
+  animal.fly() // animal 在这里被缩小为 Bird 类型 , 可以调用 Bird 类型的方法
+ }
+}
+```
+
+4. 平等缩小 (Equality Narrowing)：通过 `=== `或 `!== `运算符可以缩小类型范围。
+
+* 平等缩小一般是用来判断字面量类型
+
+```typescript
+type Direction = 'left' | 'right' | 'top' | 'bottom'
+
+const switchDirection = (direction: Direction) => {
+ switch (direction) {
+  case 'left':
+   console.log('向左移动')
+   break
+  case 'right':
+   console.log('向右移动')
+   brea
+  case 'top':
+   console.log('向上移动')
+   break
+  case 'bottom':
+   console.log('向下移动')
+   break
+ }
+}
+```
+
+... 等等
+
 ### 泛型
 
 很多的时候比如说函数在使用的时候，我们并不知道它需要什么样的参数，那我们就可以在调用的时候把类型给传进去，定义类型的时候使用一个变量来保存，可以简单理解为，就是使用一个 slot 来占位
@@ -1820,7 +1927,238 @@ getFirst([1, 2, 3]) // 正确
 
 上面示例中，实际参数是[1, 2, 3]，TypeScript 推断 T 等于number，从而覆盖掉默认值string。
 
+### 类
 
+类（Class）是面向对象编程的核心概念，用于创建对象的蓝图。类可以包含属性、构造函数和方法
+
+#### 类的定义
+
+类的定义使用 `class` 关键字，后跟类名。类可以包含属性、构造函数和方法
+
+```typescript
+// 定义一个类
+class Person {
+  // 定义属性
+  name: string;
+  age: number;
+
+  // 构造函数，用于初始化对象
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+
+  // 定义方法
+  greet() {
+    console.log(`Hello, my name is ${this.name} and I am ${this.age} years old.`);
+  }
+}
+
+// 创建类的实例
+const p1 = new Person('zhangsan', 18);
+
+// 调用方法
+p1.greet(); // 输出: Hello, my name is zhangsan and I am 18 years old.
+```
+
+1. **类的定义**：
+   - 使用 `class` 关键字定义类 Person。
+   - 类中定义了两个属性 name和 age，它们的类型分别是 `string` 和 `number`。
+2. **构造函数**：
+   - 构造函数 constructor 用于在创建对象时初始化属性。
+   - 在构造函数中，使用 `this` 关键字引用类的实例，并将传入的参数赋值给实例的属性。
+3. **方法**：
+   - 类中定义了一个方法 `greet`，它输出一个包含 name和 age的问候语。
+4. **创建实例**：
+   - 使用 `new` 关键字创建类的实例 p1，并传入参数 `'zhangsan'` 和 `18`。
+5. **调用方法**：
+   - 调用实例的 `greet` 方法，输出问候语
+
+#### 继承
+
+`TypeScript` 中的类还支持继承，可以使用 `extends` 关键字创建一个类的子类
+
+```typescript
+class Student extends Person {
+  studentId: number;
+
+  constructor(name: string, age: number, studentId: number) {
+    super(name, age); // 调用父类的构造函数
+    this.studentId = studentId;
+  }
+
+  study() {
+    console.log(`${this.name} is studying.`);
+  }
+}
+
+const s1 = new Student('lisi', 20, 12345);
+s1.greet(); // 输出: Hello, my name is lisi and I am 20 years old.
+s1.study(); // 输出: lisi is studying.
+```
+
+在这个示例中，`Student` 类继承了 Person 类，并添加了一个新的属性 `studentId` 和一个新的方法 `study`。通过继承，`Student` 类可以访问 Person类的属性和方法
+
+
+
+#### 类成员修饰符
+
+在``TypeScript`中，类的属性和方法支持三种修饰符：`public`、`private`、`protected`
+`public`修饰的是在任何地方可见、公有的属性或方法，默认编写的属性就是`public`的；
+`private`修饰的是仅在同一类中可见、私有的属性或方法；
+`protected`修饰的是仅在类自身及子类中可见、受保护的属性或方法；
+
+`public` 修饰符表示成员是公开的，可以在任何地方访问。默认情况下，类的所有成员都是 `public` 的
+
+```typescript
+class Person {
+  public name: string;
+  public age: number;
+
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+
+  public greet() {
+    console.log(`Hello, my name is ${this.name} and I am ${this.age} years old.`);
+  }
+}
+
+const p1 = new Person('zhangsan', 18);
+console.log(p1.name); // 可以访问
+p1.greet(); // 可以访问
+```
+
+`private` 修饰符表示成员是私有的，只能在类的内部访问，不能在类的外部访问
+
+```typescript
+class Person {
+  private name: string;
+  private age: number;
+
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+
+  public greet() {
+    console.log(`Hello, my name is ${this.name} and I am ${this.age} years old.`);
+  }
+}
+
+const p1 = new Person('zhangsan', 18);
+// console.log(p1.name); // 错误: 属性“name”为私有属性，只能在类“Person”中访问
+p1.greet(); // 可以访问
+```
+
+`protected` 修饰符表示成员是受保护的，可以在类的内部和子类中访问，但不能在类的外部访问
+
+```typescript
+class Person {
+  protected name: string;
+  protected age: number;
+
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+
+  protected greet() {
+    console.log(`Hello, my name is ${this.name} and I am ${this.age} years old.`);
+  }
+}
+
+class Student extends Person {
+  private studentId: number;
+
+  constructor(name: string, age: number, studentId: number) {
+    super(name, age);
+    this.studentId = studentId;
+  }
+
+  public introduce() {
+    this.greet(); // 可以访问受保护的成员
+    console.log(`My student ID is ${this.studentId}.`);
+  }
+}
+
+const s1 = new Student('lisi', 20, 12345);
+// console.log(s1.name); // 错误: 属性“name”为受保护属性，只能在类“Person”及其子类中访问
+s1.introduce(); // 可以访问
+```
+
+
+
+#### setter和getter
+
+在前面一些私有属性我们是不能直接访问的，或者某些属性我们想要监听它的获取（getter)和设置（setter)的过程，这个时候我们
+可以使用存取器
+
+类中的 `setter` 和 `getter` 方法用于控制对类属性的访问和修改。`getter` 方法用于获取属性的值，而 `setter` 方法用于设置属性的值。通过使用 `getter` 和 `setter`，可以在访问和修改属性时添加额外的逻辑
+
+
+
+```typescript
+class Person {
+  private _name: string;
+  private _age: number;
+
+  constructor(name: string, age: number) {
+    this._name = name;
+    this._age = age;
+  }
+
+  // getter 方法，用于获取 name 属性的值
+  get name(): string {
+    return this._name;
+  }
+
+  // setter 方法，用于设置 name 属性的值
+  set name(newName: string) {
+    if (newName.length > 0) {
+      this._name = newName;
+    } else {
+      console.log('Name cannot be empty.');
+    }
+  }
+
+  // getter 方法，用于获取 age 属性的值
+  get age(): number {
+    return this._age;
+  }
+
+  // setter 方法，用于设置 age 属性的值
+  set age(newAge: number) {
+    if (newAge > 0) {
+      this._age = newAge;
+    } else {
+      console.log('Age must be positive.');
+    }
+  }
+}
+
+const p1 = new Person('zhangsan', 18);
+console.log(p1.name); // 输出: zhangsan
+p1.name = 'lisi'; // 设置新的 name
+console.log(p1.name); // 输出: lisi
+p1.age = 20; // 设置新的 age
+console.log(p1.age); // 输出: 20
+p1.age = -5; // 尝试设置无效的 age，输出: Age must be positive.
+```
+
+1. **私有属性**：
+   - 使用 `private` 修饰符定义私有属性 `_name` 和 `_age`，这些属性只能在类的内部访问。
+2. **getter 方法**：
+   - `get name() `方法用于获取 `_name` 属性的值。
+   - `get age()`方法用于获取 `_age` 属性的值。
+3. **setter 方法**：
+   - `set name(newName: string)` 方法用于设置 `_name` 属性的值，并添加了一个检查，确保 `newName` 不是空字符串。
+   - `set age(newAge: number)`方法用于设置 `_age` 属性的值，并添加了一个检查，确保 `newAge` 是正数。
+4. **使用 getter 和 setter**：
+   - 通过 `p1.name`和 `p1.age` 访问和修改属性时，实际上调用的是相应的 `getter` 和 `setter` 方法。
+
+通过使用 `getter` 和 `setter` 方法，可以在访问和修改属性时添加额外的逻辑，从而更好地控制属性的访问和修改
 
 ### 三斜线指令
 
