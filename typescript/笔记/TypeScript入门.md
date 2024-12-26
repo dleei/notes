@@ -392,11 +392,66 @@ tsc -p ./dir
 10.module
 默认common.js  可选es6模式 amd  umd 等
 
+## typescript开发环境搭建
 
+VS Code 本身就是由 TypeScript 编写的，因此它对 TypeScript 有着非常全面的支持，包括类型检查、补全等功能
+
+首先是开发typescript项目的插件
+
+[Typescript Importer](https://marketplace.visualstudio.com/items?itemName=pmneo.tsimporter) 类型自动导入
+
+这一插件会收集你项目内所有的类型定义，在你敲出`:`时提供这些类型来进行补全。如果你选择了一个，它还会自动帮你把这个类型导入进来。效果如图所示：
+
+<img src="https://raw.githubusercontent.com/pmneo/ts-importer/master/demo.gif" style="zoom:67%;" />
+
+[Move Ts](https://marketplace.visualstudio.com/items?itemName=stringham.move-ts) 快速移动typescript文件
+
+这一插件在重构以及像我们这样写 demo 的场景下很有帮助。它可以让你通过编辑文件的路径，直接修改项目的目录结构。比如从`home/project/learn-interface.ts` 修改成 `home/project/interface-notes/interface-extend.ts`，这个插件会自动帮你把文件目录更改到对应的样子，并且更新其他文件中对这一文件的导入语句。
+
+<img src="https://github.com/stringham/move-ts/raw/master/images/usage.gif" style="zoom:67%;" />
+
+JSON to TS 可以将后端的接口文档的 json 文件格式改成 ts 的格式
+
+如果后端的接口文档使用的是 knife4j 搭建的话,里面增强了一些功能,默认是有对应的ts模板的,可以忽略
+
+<img src="./../assets/json2ts.png" style="zoom:67%;" />
+
+<img src="./../assets/knife4j.png" style="zoom:67%;" />
+
+使用
+
+全部选中文件后, 按下快捷键 `ctrl + shift + alt + s`,全部转换为ts的格式
+
+<img src="./../assets/json2ts%E5%BF%AB%E6%8D%B7%E9%94%AE.gif" style="zoom: 50%;" />
+
+
+
+当然，对于 VS Code 内置的 TypeScript 支持，我们也可以通过一些配置项获得更好的开发体验。首先，你需要通过 Ctrl(Command) + Shift + P 打开命令面板，找到「打开工作区设置」这一项
+
+![](./../assets/ctrl%20shift%20p.png)
+
+然后，在打开的设置中输入 typescript，筛选出所有 TypeScript 有关的配置，点击左侧的"TypeScript"，这里才是官方内置的配置。
+
+<img src="./../assets/typescript%E9%85%8D%E7%BD%AE.png" style="zoom:67%;" />
+
+我们需要做的就是开启一些代码提示功能（hints），我们知道 TS 能够在很多地方进行类型地自动推导，但你往往要把鼠标悬浮在代码上才能看到推导得到的类型，其实我们可以通过配置将这些推导类型显示出来：
+
+在前面配置搜索处，搜索 'typescript Inlay Hints'，展示的配置就都是提示相关的了，推荐开启的有这么几个：
+
+- Function Like Return Types，显示推导得到的函数返回值类型；
+- Parameter Names，显示函数入参的名称；
+- Parameter Types，显示函数入参的类型；
+- Variable Types，显示变量的类型。
+
+以上选项开启后效果如下
+
+<img src="./../assets/%E9%85%8D%E7%BD%AE%E9%A1%B9%E4%BF%AE%E6%94%B9%E5%90%8E%E6%95%88%E6%9E%9C.png" style="zoom:67%;" />
+
+依照自己的习惯和需求开启即可
 
 #### 直接运行ts文件   ts-node/ts-node-dev
 
-当然，如果你主要是想执行 TypeScript 文件，就像 `node index.js` 这样快速地验证代码逻辑，这个时候你就需要 [ts-node](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FTypeStrong%2Fts-node) 以及 [ts-node-dev](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fwclr%2Fts-node-dev) 这一类工具了。它们能直接执行 ts 文件，并且支持监听文件重新执行
+当然，如果你主要是想执行 TypeScript 文件，就像 `node index.js` 这样快速地验证代码逻辑，这个时候你就需要 [ts-node](https://www.npmjs.com/package/ts-node) 以及 [ts-node-dev](https://www.npmjs.com/package/ts-node-dev) 这一类工具了。它们能直接执行 ts 文件，并且支持监听文件重新执行
 
 ```bash
 pnpm i ts-node -g
@@ -450,7 +505,7 @@ let name:string = 'ikun'
 
 类型声明的写法，一律为在标识符后面添加“冒号 + 类型”。函数参数和返回值，也是这样来声明类型。
 
-```ts
+```typescript
 // 例一：
 function addCount（num:number）:number {
 return num++
@@ -466,6 +521,8 @@ const toString = (num:number):string => {
 示例二的箭头函数中，函数`toString()`的参数`num`的类型是`number`。参数列表的圆括号后面，声明了返回值的类型是`string`
 
 ## typescript中的类型
+
+`typescript`是`javascript`的超集,当然包含所有的js里面所有的类型,但是也是有这ts自己的一些独特的类型,比如 `enum` ,`never`, `unknow`等
 
 ### 字符串类型
 
@@ -564,6 +621,8 @@ age = null;      // 正确
 age = undefined; // 正确
 ```
 
+
+
 ```ts
 const obj:object = undefined;
 obj.toString() // 编译不报错，运行就报错
@@ -636,17 +695,6 @@ let test: undefined = undefined
 let num2: string = "1"
 
 num2 = test
-```
-
-TIPS 注意：
-如果你配置了`tsconfig.json` 开启了严格模式
-
-```ts
-{
-    "compilerOptions":{
-        "strict": true
-    }
-}
 ```
 
 ### any类型
@@ -730,8 +778,6 @@ function toString(num:number) {
 从这里可以看到，TypeScript 的设计思想是，类型声明是可选的，你可以加，也可以不加。即使不加类型声明，依然是有效的 TypeScript 代码，只是这时不能保证 TypeScript 会正确推断出类型。由于这个原因，所有 JavaScript 代码都是合法的 TypeScript 代码。
 
 这样设计还有一个好处，将以前的 JavaScript 项目改为 TypeScript 项目时，你可以逐步地为老代码添加类型，即使有些代码没有添加，也不会无法运行
-
-
 
 ### 类型推论问题
 
@@ -1061,7 +1107,9 @@ let a6:object = ()=> 123  // 正确  非原始类型
 
 ### 接口和对象类型
 
-在typescript中，我们定义对象的方式要用关键字interface（接口），我的理解是使用interface来定义一种约束，让数据的结构满足约束的格式。接口定义变量的命名建议使用大驼峰命名方案
+在typescript中，我们定义对象的方式要用关键字interface（接口），我的理解是使用interface来定义一种约束，让数据的结构满足约束的格式。
+
+接口定义变量的命名建议使用大驼峰命名方案
 
 定义方式如下：
 
@@ -1134,7 +1182,7 @@ type value = 123 | '123' | 456
 let value:value = 123 // 变量value的值只能是上面value定义的值
 ```
 
-type与interface的区别
+#### type与interface的区别
 
 ```ts
 interface A extends B {
@@ -1148,6 +1196,12 @@ interface B {
 type A = string & B  // type 只能使用 & 交叉类型来实现，合到一起
 type C = number | string  // 可以使用联合类型
 ```
+
+#### 到底是使用interface还是type来定义类型?
+
+在typescript官网中的说明是, 在大多数情况下，你可以根据个人喜好进行选择,没有那一种是最好的
+
+![](./../assets/interface%E8%BF%98%E6%98%AFtype.png)
 
 ### 可选属性 使用`?`操作符
 
@@ -3954,97 +4008,19 @@ declare var $:JQuery;
 declare module '模块名';
 ```
 
-有了上面的命令，指定模块的所有接口都将视为`any`类型。
 
 
+> 本文为个人学习记录，内容会根据学习进度不定期补充和更新，难免存在一定的疏漏或错误。若发现任何问题，恳请指正与建议。
 
+## 参考资料
 
+[阮一峰typescript教程](https://wangdoc.com/typescript)
 
+[冴羽typescript教程](https://ts.yayujs.com/)
 
+[林不渡《TypeScript 全面进阶指南》小册](https://juejin.cn/book/7086408430491172901?suid=712139234359182&source=pc)
 
+[typescript中文手册](https://www.tsdev.cn/)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+[typescript官网](https://www.typescriptlang.org/)
 
