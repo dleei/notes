@@ -1180,6 +1180,179 @@ export default App
 
 ```
 
+### 受控组件和非受控组件
+
+**受控组件**是指组件的值由 React 的状态（`state`）管理。通过 `state` 来驱动组件的值显示和更新，所有的用户输入都被同步到 React 的状态中，从而完全受 React 控制。
+
+```tsx
+import { useState } from 'react';
+
+function App() {
+  const [text, setText] = useState(''); // 定义一个状态 text，用于管理输入框的值
+
+  // 当输入框的内容变化时触发
+  const OnInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value); // 更新状态为输入框的值
+  };
+
+  return (
+    <>
+      {/* 输入框的值由 state（text）决定 */}
+      <input 
+        type="text" 
+        value={text} 
+        onChange={e => OnInput(e)} 
+      />
+      <div>{text}</div> {/* 实时显示输入框中的值 */}
+    </>
+  );
+}
+
+export default App;
+
+```
+
+用户在输入框中输入内容时，`onChange` 事件触发 `OnInput` 函数。
+
+`OnInput` 函数通过 `setText` 更新 `text` 状态。
+
+React 重新渲染，`text` 状态作为 `input` 的 `value` 属性更新到 DOM。
+
+显示在 `<div>` 中的内容同步更新为最新的状态值。
+
+实现的效果类似于vue中的双向绑定的效果,数据和界面双向绑定，实时同步
+
+
+
+**非受控组件**是指组件的值由 DOM 自身状态管理，而不是由 React 的状态控制。通常通过 `ref` 获取 DOM 节点来读取组件的值。
+
+```tsx
+import { useRef } from 'react';
+
+function App() {
+  const inputRef = useRef<HTMLInputElement>(null); // 创建一个 ref，用于引用输入框
+
+  // 当点击按钮时触发
+  const handleClick = () => {
+    if (inputRef.current) {
+      alert(inputRef.current.value); // 获取输入框的值
+    }
+  };
+
+  return (
+    <>
+      {/* 输入框的值不受 React 状态控制 */}
+      <input 
+        type="text" 
+        ref={inputRef} // 使用 ref 引用输入框
+      />
+      <button onClick={handleClick}>Show Value</button>
+    </>
+  );
+}
+
+export default App;
+
+```
+
+输入框的值由用户直接输入，React 不干预。
+
+点击按钮时，通过 `ref` 获取输入框 DOM 对象的 `value` 属性。
+
+
+
+输入框的值由 DOM 自己管理，与 React 状态无关。
+
+通过 `ref` 访问值，React 不会自动同步或追踪值的变化
+
+### react获取DOM
+
+使用createRef
+
+```tsx
+import { useState,createRef } from 'react'
+import type { RefObject } from 'react'
+
+
+function App() {
+  const [text] = useState('hello')
+  
+  const getRef = () => {
+    console.log(titleRef.current);
+  }
+  
+  const titleRef: RefObject<HTMLHeadingElement> = createRef()
+  return <>
+  <h1 ref={titleRef}>{text}</h1>
+  <button onClick={getRef}>change</button>
+  </>
+}
+
+export default App
+```
+
+这个和最近的 vue3.5 中更新的 useTemplateRef 是一样的，原来是直接在组件或是原生DOM上绑定ref
+
+vue实现方式
+
+```vue
+<template>
+  <div>
+    <h1 ref="titleRef">{{ title }}</h1>
+    <button @click="getNativeDOM">getDOM</button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, useTemplateRef } from 'vue';
+
+const title = ref('Hello World');
+
+const titleRef = useTemplateRef('titleRef');
+
+const getNativeDOM = () => {
+  console.log(titleRef.value);
+};
+</script>
+```
+
+获取函数组件的元素
+
+由于在函数式组件中没有实例，所以没有办法直接在组件上绑定ref来获取组件的实例，需要使用 forwardRef 函数
+
+通过绑定到返回的 react 元素上来解决
+
+```tsx
+import { useState, forwardRef, useRef } from 'react'
+
+const Son = forwardRef<HTMLDivElement, { children: React.ReactNode }>(
+  ({ children }, ref) => {
+    return <div ref={ref}>{children}</div>
+  }
+)
+
+function App() {
+  const [text] = useState('hello')
+
+  const titleRef = useRef<HTMLDivElement>(null)
+  
+  const getRef = () => {
+    console.log(titleRef.current);
+  }
+  return (
+    <>
+      <Son ref={titleRef}>{text}</Son>
+      <button onClick={getRef}>change</button>
+    </>
+  )
+}
+
+export default App
+
+```
+
+子组件的第一个参数是，传递给子组件的数据，第二个参数是绑定在组件上的 ref，通过外面传递进来的ref绑定到子组件里面的元素上来实现
+
 ### 自定义hook
 
 ```tsx
