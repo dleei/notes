@@ -6,21 +6,24 @@
   "scripts": {
     "start": "nodemon src/main.js",
     "lint": "eslint src",
+    "clean": "rimraf node_modules",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write src"
-    
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@koa/bodyparser": "^5.1.1",
     "@koa/router": "^13.1.0",
     "chalk": "^5.4.1",
     "coderhub-backend": "link:",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.4.7",
+    "figlet": "^1.8.0",
+    "jsonwebtoken": "^9.0.2",
     "koa": "^2.16.0",
+    "koa-body": "^6.0.1",
     "mysql2": "^3.14.0"
   },
   "devDependencies": {
