@@ -1,9 +1,9 @@
 import koaRouter from '@koa/router';
-import { verifyLogin } from '../middleware/login.middleware.js';
-import LoginController from '../controller/login.controller.js'
+import { verifyLogin, verifyAuth } from '../middleware/login.middleware.js';
+import LoginController from '../controller/login.controller.js';
 
 const loginRouter = new koaRouter({ prefix: '/login' });
 
-loginRouter.post('/', verifyLogin, LoginController.sign);
+loginRouter.post('/', verifyLogin, verifyAuth, LoginController.sign);
 
 export default loginRouter;

@@ -4,6 +4,7 @@ import {
   USER_ALREADY_EXISTS,
   NAME_IS_NOT_EXISTS,
   PASSWORD_IS_INCORRECT,
+  UNAUTHORIZETION,
 } from '../config/error.js';
 
 app.on('error', (err, ctx) => {
@@ -26,6 +27,10 @@ app.on('error', (err, ctx) => {
     case PASSWORD_IS_INCORRECT:
       code = 20004;
       message = '密码错误,请检查密码是否正确';
+      break;
+    case UNAUTHORIZETION:
+      code = 20005;
+      message = 'token无效或已过期';
       break;
   }
 
