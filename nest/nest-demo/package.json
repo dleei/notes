@@ -1,0 +1,22 @@
+{
+  "name": "nest-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@nestjs/common": "^11.0.13",
+    "@nestjs/core": "^11.0.13",
+    "@nestjs/platform-express": "^11.0.13",
+    "reflect-metadata": "^0.2.2",
+    "typescript": "^5.8.3",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+  }
+}
