@@ -1,0 +1,51 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "content": "Hello 你叫什么名字？",
+      "time": "2024-03-11 10:00:00",
+      "type": "self",
+      "author": "jenny"
+    },
+    {
+      "id": 2,
+      "content": "我叫Tom",
+      "time": "2024-03-11 10:00:01",
+      "type": "other",
+      "author": "Tom"
+    },
+    {
+      "id": 3,
+      "content": "你好，Tom",
+      "time": "2024-03-11 10:00:02",
+      "type": "self",
+      "author": "jenny"
+    }
+  ],
+  "tabList": [
+    { "title": "聊天",
+      "name": "Chat",
+      "path": "/chat"
+    },
+    {
+      "title": "群聊",
+      "name": "Group",
+      "path": "/group"
+    },
+    {
+      "title": "联系人",
+      "name": "Contacts",
+      "path": "/contacts"
+    },
+    {
+      "title": "空间",
+      "name": "Space",
+      "path": "/space"
+    },
+    {
+      "title": "设置",
+      "name": "Setting",
+      "path": "/setting"
+    }
+  ]
+}

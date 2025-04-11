@@ -561,9 +561,95 @@ npm start start：debug
 
 <img src="D:\Download\notes\nest\笔记\assets\编辑器调试2.png" style="zoom:67%;" />
 
-可以看到代码在此处停住，在左侧可以看到代码的执行流变量以及调用堆栈
+可以看到代码在此处停住，在左侧可以看到代码的执行流程，变量以及调用堆栈
 
 
+
+## controller
+
+<img src="D:\Download\notes\nest\笔记\assets\Controller.png" style="zoom:50%;" />
+
+控制器的目的是处理应用的特定请求。路由机制确定哪个控制器将处理每个请求。通常，控制器具有多个路由，每个路由可以执行不同的操作。
+
+控制器的职责
+
+- **处理路由和请求**，接收http请求并确定路由，一个控制器通常具有多个路由，各自的路由执行不同的操作
+- **解析和校验数据**，控制器通常负责解析并验证请求的数据，例如使用管道或是DTO，控制器可以定义和进行数据验证、格式化、转换操作
+- **调用Service**，Controller 层用于调度 Service 层执行业务逻辑处理，是 Service 层的入口
+
+## Service
+
+Service的职责
+
+- **处理业务逻辑**，包含对数据的处理，外部系统的调用和复杂的业务逻辑的处理
+
+- **数据持久化**，与数据库，Redis 缓存存储库进行交互，执行持久化操作，Service 中使用模型或是实体来对数据进行增删改查操作
+
+  
+
+## nest中的装饰器
+
+
+
+## 模块
+
+模块是一个用 `@Module()` 装饰器注释的类。此装饰器提供 Nest 用于有效组织和管理应用结构的元数据。
+
+<img src="D:\Download\notes\nest\笔记\assets\03.png" style="zoom:50%;" />
+
+Nest 提供了一套模块系统，通过 `@Module`声明模块
+
+<img src="D:\Download\notes\nest\笔记\assets\01.png" style="zoom:67%;" />
+
+通过 `@Controller`、`@Injectable` 分别声明其中的 `controller` 和 `provider`
+
+<img src="D:\Download\notes\nest\笔记\assets\02.png" style="zoom: 45%;" />
+
+​	
+
+| 参数        | 作用                                                         |
+| ----------- | ------------------------------------------------------------ |
+| providers   | 注册当前模块的**服务（Service）**、**工厂（Factory）**、**工具类**等。这些提供者（Providers）会被 NestJS 的依赖注入（DI）系统管理 |
+| controllers | 注册当前模块的**控制器（Controller）**，负责处理 HTTP 请求和路由 |
+| imports     | 导入其他模块（如共享模块、第三方模块）。只有被导入的模块中导出的提供者（通过 `exports`）才能在当前模块中使用 |
+| exports     | 导出当前模块的提供者（Providers），供其他模块使用。只有被导出的服务才能被其他模块访问。 |
+
+常见模块类型
+
+- 根模块
+
+应用的入口模块，通常命名为 `AppModule`，通过 `@nestjs/core` 的 `NestFactory.create()` 启动
+
+- 功能模块
+
+  实现特定功能的模块（如 `UserModule`、`OrderModule`）
+
+- 共享模块
+
+  通过 `exports` 共享提供者，供多个模块复用
+
+```ts
+@Module({
+  providers: [LoggerService],
+  exports: [LoggerService],
+})
+export class LoggerModule {}
+```
+
+- 全局模块
+
+  使用 `@Global()` 装饰器，使模块全局可见（其他模块无需导入即可使用）
+
+  ```ts
+  @Global()
+  @Module({
+    providers: [ConfigService],
+    exports: [ConfigService],
+  })
+  export class ConfigModule {}
+  ```
+
+### 动态模块
 
 
 
