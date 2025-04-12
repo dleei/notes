@@ -19,7 +19,10 @@ export default ({ mode }: { mode: string }) => {
   return defineConfig({
     // 生产环境打包路径
     base: "/",
-
+    // 环境变量目录
+    envDir: resolve(__dirname, "./env"), 
+    // public 目录
+    publicDir: resolve(__dirname, "./public"),
     // 插件相关配置
     plugins: [
         react(),

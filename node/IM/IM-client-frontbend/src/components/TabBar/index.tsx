@@ -11,15 +11,22 @@ const TabBar: FC<ITabList> = () => {
 
   return (
     <TabBarWrapper>
-      <div className="tab">
-        {tabList.map((item) => {
-          return (
-            <div key={item.name} className="item" onClick={() => navigate(item.path)}>
-              <Icon name={item.name}></Icon>
-              <span className="ml-2">{item.title}</span>
-            </div>
-          );
-        })}
+      <div className="flex flex-col justify-between px-3 h-full">
+        <div className="tab flex-1">
+          {tabList.map((item) => {
+            return (
+              <div key={item.name}>
+                <div key={item.name} className="item" onClick={() => navigate(item.path)}>
+                  <Icon name={item.name}></Icon>
+                  <span className="ml-2">{item.title}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="p-2">
+          <Icon name="Avatar" />
+        </div>
       </div>
     </TabBarWrapper>
   );

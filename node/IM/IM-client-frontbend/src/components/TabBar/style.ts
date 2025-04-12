@@ -11,10 +11,9 @@ const TabBarWrapper = styled.div`
     .item {
       display: flex;
       font-size: 12px;
-      padding: 10px;
       align-items: center;
       position: relative;
-      margin: 3px 6px;
+      padding: 5px 8px;
       border-radius: 4px;
       cursor: pointer;
       font-weight: bold;

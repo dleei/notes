@@ -6,13 +6,14 @@ import type { IMessage } from "../../types/message";
 import { Avatar } from "@arco-design/web-react";
 
 const Message: FC<IMessage> = (props) => {
-  const { type, msg, time } = props.info;
+  const { type, content, time } = props;
+  // debugger
   const messageBoxClassName = `msg-box ${type}`;
 
   return (
     <MessageWrapper>
       <div className="content">
-        {type !== "self" ? (
+        {type !== 'self' ? (
           <Avatar>
             <img
               alt="avatar"
@@ -21,11 +22,11 @@ const Message: FC<IMessage> = (props) => {
           </Avatar>
         ) : null}
         <div className={messageBoxClassName}>
-          <div className="message">{msg}</div>
+          <div className="message">{content}</div>
           <div className="time">{time}</div>
         </div>
 
-        {type === "self" ? (
+        {type === 'self' ? (
           <Avatar>
             <img
               alt="avatar"

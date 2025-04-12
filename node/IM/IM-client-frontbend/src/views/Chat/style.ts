@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
- const ChatWrapper = styled.div`
+const ChatWrapper = styled.div`
   .home {
     display: flex;
     background-color: #f6f6f6;
@@ -9,11 +9,9 @@ import styled from "styled-components";
     .list {
       width: 200px;
       padding: 20px;
-      background-color: #204969;
+      background-color: #3152E4;
     }
   }
-  
-
 
   .content_chat {
     flex: 1;
@@ -22,7 +20,16 @@ import styled from "styled-components";
     flex-direction: column;
     .content {
       flex: 1;
-      background-color: #f7fafa;
+      
+      .empty-background {
+       
+        width: 100%;
+        height: 100%;
+        background-image: url("/src/assets/status/暂无消息.png");  
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 300px auto;
+      }
     }
 
     .chat {
@@ -45,4 +52,4 @@ import styled from "styled-components";
   }
 `;
 
-export default ChatWrapper
+export default ChatWrapper;
