@@ -1,4 +1,5 @@
-import express, { static as expressStatic } from 'express'
+import { static as expressStatic } from 'express'
+import app from './app/index.js'
 import { Server } from 'socket.io'
 import { createServer } from 'http'
 import { fileURLToPath } from 'node:url'
@@ -10,8 +11,6 @@ import { SERVER_PORT } from './config/index.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DATA_DIR = join(__dirname, 'data')
 const MESSAGES_FILE = join(DATA_DIR, 'message.jsonl')
-
-const app = express()
 
 // 设置静态文件目录
 app.use(expressStatic(join(__dirname, 'public')))
