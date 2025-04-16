@@ -7,7 +7,10 @@
     "module": "NodeNext" /* Specify what module code is generated. */,
     "rootDir": "./" /* Specify the root folder within your source files. */,
     "moduleResolution": "NodeNext" /* Specify how TypeScript looks up a file from a given module specifier. */,
-     "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
+    "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
+    "paths": {
+      "@vue/*": ["packages/*/src"]
+    },
 
     "resolveJsonModule": true /* Enable importing .json files. */,
 
@@ -22,7 +25,7 @@
 
     /* Type Checking */,
     "rootDirs": ["packages"],
-    
+
     "strict": true /* Enable all strict type-checking options. */,
     "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
 
