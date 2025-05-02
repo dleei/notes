@@ -1,13 +1,18 @@
-import { FC } from "react";
-import { Button, Form, Input, Checkbox } from "antd";
+import { FC, useState } from "react";
+import { Button, Form, Input, Checkbox, message } from "antd";
+import { useNavigate } from "react-router-dom";
 
 import RegisterWrapper from "./style";
 import Icon from "@/components/Icon";
 import rules from "@/config";
 import type { Register } from "@/types";
 import { register } from "@/apis";
+import { ResponseStatus } from "@/enum";
 
 const Register: FC = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -27,8 +32,22 @@ const Register: FC = () => {
   };
 
   const toRegister = async (value: Register) => {
-    const res = await register(value);
-    console.log(res);
+    try {
+      setLoading(true);
+      const { code } = await register(value);
+
+      if (code !== ResponseStatus.SUCCESS) {
+        message.error("注册失败，请稍后重试");
+        return;
+      }
+
+      message.success("注册成功，请登录");
+      navigate("/login");
+    } catch (error) {
+      message.error("注册请求失败，请稍后重试");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,17 +55,14 @@ const Register: FC = () => {
       <div className="w-[420px] bg-white px-8 py-6 rounded-lg shadow-lg">
         <h1 className="text-center mb-6 text-2xl font-bold">图书管理系统</h1>
         <Form {...formItemLayout} className="max-w-md mx-auto" onFinish={toRegister}>
-          {/* 用户名 */}
           <Form.Item label="用户名" name="username" rules={rules.userRules.name}>
             <Input prefix={<Icon name="user" />} />
           </Form.Item>
 
-          {/* 密码 */}
           <Form.Item label="密码" name="password" rules={rules.userRules.password}>
             <Input.Password prefix={<Icon name="password" />} />
           </Form.Item>
 
-          {/* 操作区域 */}
           <Form.Item {...tailFormItemLayout}>
             <div className="flex justify-between items-center">
               <Checkbox>记住密码</Checkbox>
@@ -56,9 +72,8 @@ const Register: FC = () => {
             </div>
           </Form.Item>
 
-          {/* 注册按钮 */}
           <Form.Item {...tailFormItemLayout}>
-            <Button block type="primary" htmlType="submit" size="large">
+            <Button loading={loading} block type="primary" htmlType="submit" size="large">
               注册
             </Button>
           </Form.Item>

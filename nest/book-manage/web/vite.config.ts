@@ -13,13 +13,11 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 // https://vite.dev/config/
 export default ({ mode }: { mode: string }) => {
-  const { VITE_BASE_URL_DEV } = loadEnv(mode, resolve(__dirname));
+  const { VITE_BASE_URL_DEV } = loadEnv(mode, process.cwd());
 
   return defineConfig({
     // 生产环境打包路径
     base: "/",
-
-    envDir: "./env",
     // 插件相关配置
     plugins: [
       react(),
@@ -69,8 +67,8 @@ export default ({ mode }: { mode: string }) => {
           rewrite: (path) => path.replace(/^\/api/, ""), // 请求地址重写, 请求地址前缀 /api 替换为空
         },
       },
-      open: true, // 自动打开浏览器
-      port: 4500, // 服务端口
+      // open: true, // 自动打开浏览器
+      // port: 4500, // 服务端口
     },
 
     // 打包配置

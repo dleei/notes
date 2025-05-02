@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { DbService } from 'src/db/db.service';
@@ -17,7 +17,12 @@ export class UserService {
     );
 
     if (foundUser) {
-      throw new BadRequestException('该用户已经注册');
+      // throw new BadRequestException('该用户已经注册');
+      return {
+        data: null,
+        message: '该用户已经注册',
+        code: 20001,
+      };
     }
 
     const user = new User();
@@ -26,7 +31,11 @@ export class UserService {
     users.push(user);
 
     await this.dbService.write(users);
-    return user;
+    return {
+      data: user,
+      message: 'success',
+      code: 20000,
+    };
   }
 
   async login(loginUserDto: LoginUserDto) {
@@ -37,13 +46,27 @@ export class UserService {
     );
 
     if (!foundUser) {
-      throw new BadRequestException('用户不存在');
+      // throw new BadRequestException('用户不存在');
+      return {
+        data: null,
+        message: '用户不存在',
+        code: 20002,
+      };
     }
 
     if (foundUser.password !== loginUserDto.password) {
-      throw new BadRequestException('密码不正确');
+      // throw new BadRequestException('密码不正确');
+      return {
+        data: null,
+        message: '密码不正确',
+        code: 20003,
+      };
     }
 
-    return foundUser;
+    return {
+      data: foundUser,
+      message: 'success',
+      code: 20000,
+    };
   }
 }

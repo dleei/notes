@@ -1,0 +1,7 @@
+export enum ResponseStatus {
+  SUCCESS = 20000,
+  ALREADY_EXISTS = 20001,
+  NOT_FOUND = 20002,
+  PASSWORD_ERROR = 20003,
+  UNAUTHORIZED = 20004,
+}

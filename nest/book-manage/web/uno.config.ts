@@ -21,7 +21,8 @@ export default defineConfig({
     {
       'flex-center': 'flex justify-center items-center',
       'flex-col-center': 'flex flex-col justify-center items-center',
-      'm-center': 'my-0 mx-auto'
+      'm-center': 'my-0 mx-auto',
+      'ellipsis': 'overflow-hidden text-ellipsis whitespace-nowrap',
     },
   ],
   // 原始 CSS 注入。

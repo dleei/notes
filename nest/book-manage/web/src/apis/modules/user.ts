@@ -8,7 +8,7 @@ import type { Register, Login } from "@/types";
  */
 
 export const login = (data: Login) => {
-  return request.post("/api/user/login", data);
+  return request.post("/user/login", data);
 };
 
 /**
@@ -18,5 +18,5 @@ export const login = (data: Login) => {
  */
 
 export const register = (data: Register) => {
-  return request.post("/api/user/register", data);
+  return request.post("/user/register", data);
 };

@@ -4,7 +4,7 @@
     "author": "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein",
     "publisher": "机械工业出版社",
     "description": "包含排序算法、红黑树、动态规划等核心内容，提供算法伪代码实现与复杂度分析",
-    "cover": "https://img9.doubanio.com/view/subject/s/public/s25648004.jpg"
+    "cover": "https://api.zzzmh.cn/v2/bz/v3/getUrl/96eaf850880911ebb6edd017c2d2eca220"
   },
   {
     "id": 2,
@@ -12,7 +12,7 @@
     "author": "Steve McConnell",
     "publisher": "电子工业出版社",
     "description": "从变量命名到系统架构的软件构建指南，涵盖代码调试与重构的实用技巧",
-    "cover": "https://img1.doubanio.com/view/subject/s/public/s1495029.jpg"
+    "cover": "https://api.zzzmh.cn/v2/bz/v3/getUrl/96eaf850880911ebb6edd017c2d2eca220"
   },
   {
     "id": 3,
@@ -20,7 +20,7 @@
     "author": "加西亚·马尔克斯",
     "publisher": "南海出版公司",
     "description": "马孔多小镇百年兴衰中，布恩迪亚家族七代人循环重复的魔幻命运轨迹",
-    "cover": "https://img9.doubanio.com/view/subject/s/public/s6384944.jpg"
+    "cover": "https://api.zzzmh.cn/v2/bz/v3/getUrl/96eaf850880911ebb6edd017c2d2eca220"
   },
   {
     "id": 4,
@@ -28,7 +28,7 @@
     "author": "余华",
     "publisher": "作家出版社",
     "description": "农民福贵历经家破人亡仍坚持生存的故事，反映20世纪中国社会变迁",
-    "cover": "https://img1.doubanio.com/view/subject/s/public/s29053580.jpg"
+    "cover": "https://api.zzzmh.cn/v2/bz/v3/getUrl/96eaf850880911ebb6edd017c2d2eca220"
   },
   {
     "id": 5,
@@ -36,7 +36,7 @@
     "author": "司马迁",
     "publisher": "中华书局",
     "description": "中国首部纪传体通史，记载黄帝至汉武帝时期三千余年历史事件与人物传记",
-    "cover": "https://img9.doubanio.com/view/subject/s/public/s5920436.jpg"
+    "cover": "https://api.zzzmh.cn/v2/bz/v3/getUrl/96eaf850880911ebb6edd017c2d2eca220"
   },
   {
     "id": 6,
@@ -44,6 +44,6 @@
     "author": "N. Gregory Mankiw",
     "publisher": "北京大学出版社",
     "description": "微观经济学解析市场供需机制，宏观经济学探讨GDP核算与货币政策",
-    "cover": "https://img1.doubanio.com/view/subject/s/public/s34399534.jpg"
+    "cover": "https://api.zzzmh.cn/v2/bz/v3/getUrl/96eaf850880911ebb6edd017c2d2eca220"
   }
 ]
