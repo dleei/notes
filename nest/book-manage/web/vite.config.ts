@@ -64,7 +64,7 @@ export default ({ mode }: { mode: string }) => {
         "/api": {
           target: VITE_BASE_URL_DEV, // 服务器请求地址
           changeOrigin: true, // 是否允许跨域
-          rewrite: (path) => path.replace(/^\/api/, ""), // 请求地址重写, 请求地址前缀 /api 替换为空
+          rewrite: (path) => path.replace(/^\/api/, ""), // 重写路径
         },
       },
       // open: true, // 自动打开浏览器

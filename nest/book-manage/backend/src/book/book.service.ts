@@ -40,6 +40,7 @@ export class BookService {
   }
 
   async update(updateBookDto: UpdateBookDto) {
+    debugger;
     const books: Book[] = await this.dbService.read();
 
     const foundBook = books.find((book) => book.id === updateBookDto.id);
@@ -54,7 +55,11 @@ export class BookService {
     foundBook.name = updateBookDto.name;
 
     await this.dbService.write(books);
-    return foundBook;
+    return {
+      message: '更新成功',
+      data: foundBook,
+      code: 20000,
+    };
   }
 
   async delete(id: number) {

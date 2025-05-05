@@ -14,15 +14,17 @@ interface IProps {
   onUpdated?: (book: Book) => void;
 }
 
+interface IDetailOrEdit {
+  visible: boolean;
+  mode: "detail" | "edit";
+  loading: boolean;
+}
+
 const Card: FC<IProps> = ({ book, onDeleted, onUpdated }) => {
-  const { name, author, cover, publisher, id } = book;
+  const { name, author, cover, publisher, id, description } = book;
   const [form] = Form.useForm();
 
-  const [modalState, setModalState] = useState<{
-    visible: boolean;
-    mode: "detail" | "edit";
-    loading: boolean;
-  }>({
+  const [modalState, setModalState] = useState<IDetailOrEdit>({
     visible: false,
     mode: "detail",
     loading: false,
@@ -40,9 +42,10 @@ const Card: FC<IProps> = ({ book, onDeleted, onUpdated }) => {
   }, [modalState.visible]);
 
   // 统一处理弹窗操作
-  const handleModalAction = async (mode: "detail" | "edit") => {
+  const handleModalAction = async (mode: "detail" | "edit", id: number) => {
     setModalState((prev) => ({
       ...prev,
+      id,
       visible: true,
       mode,
     }));
@@ -58,10 +61,12 @@ const Card: FC<IProps> = ({ book, onDeleted, onUpdated }) => {
   // 提交表单
   const handleSubmit = async () => {
     setModalState((prev) => ({ ...prev, loading: true }));
-    // const values = await form.validateFields();
 
     if (modalState.mode === "edit") {
-      const updatedBook = await editBook({});
+      const values = await form.validateFields();
+
+      const updatedBook = await editBook({ ...values, id });
+
       onUpdated?.(updatedBook);
       message.success("更新成功");
     }
@@ -77,8 +82,8 @@ const Card: FC<IProps> = ({ book, onDeleted, onUpdated }) => {
         onCancel={() => setModalState((prev) => ({ ...prev, visible: false }))}
         onOk={handleSubmit}
         confirmLoading={modalState.loading}
-        okText={modalState.mode === "edit" ? "保存" : undefined}
-        cancelText={modalState.mode === "edit" ? "取消" : undefined}
+        okText="保存"
+        cancelText={modalState.mode === "detail" ? "关闭" : "取消"}
       >
         <div className="flex gap-4">
           <Image
@@ -106,6 +111,12 @@ const Card: FC<IProps> = ({ book, onDeleted, onUpdated }) => {
               )}
             </Form.Item>
 
+            {modalState.mode === "detail" && (
+              <Form.Item label="简介" name="description">
+                <div>{description}</div>
+              </Form.Item>
+            )}
+
             <Form.Item label="出版社" name="publisher">
               {modalState.mode === "detail" ? (
                 <div>{publisher}</div>
@@ -126,14 +137,14 @@ const Card: FC<IProps> = ({ book, onDeleted, onUpdated }) => {
           <div className="flex justify-around mt-2">
             <div
               className="cursor-pointer text-blue-600"
-              onClick={() => handleModalAction("detail")}
+              onClick={() => handleModalAction("detail", id)}
             >
               详情
             </div>
 
             <div
               className="cursor-pointer text-blue-600"
-              onClick={() => handleModalAction("edit")}
+              onClick={() => handleModalAction("edit", id)}
             >
               编辑
             </div>
