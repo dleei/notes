@@ -23,6 +23,28 @@ export class BookService {
     return books.find((book) => book.id === id);
   }
 
+  async search(keyWord: string) {
+    const books: Book[] = await this.dbService.read();
+    // debugger;
+    const result = books.find((book) => {
+      return book.name.includes(keyWord);
+    });
+
+    if (!result) {
+      return {
+        message: '没有找到该图书',
+        code: 20000,
+        data: [],
+      };
+    }
+
+    return {
+      message: '查询成功',
+      code: 20000,
+      data: result,
+    };
+  }
+
   async create(createBookDto: CreateBookDto) {
     const books: Book[] = await this.dbService.read();
 
@@ -40,7 +62,6 @@ export class BookService {
   }
 
   async update(updateBookDto: UpdateBookDto) {
-    debugger;
     const books: Book[] = await this.dbService.read();
 
     const foundBook = books.find((book) => book.id === updateBookDto.id);

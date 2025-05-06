@@ -26,3 +26,11 @@ export const editBook = (data: Book) => request.put("/book/update", data);
  */
 
 export const deleteBook = (id: number) => request.delete(`/book/delete/${id}`);
+
+/**
+ * 搜索图书
+ * @param {string} keyword
+ */
+
+export const searchBook = (keyWord: string) =>
+  request.get(`/book/search?keyWord=${keyWord}`);

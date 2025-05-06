@@ -38,6 +38,12 @@ export class BookController {
     return this.bookService.findById(+id);
   }
 
+  @Get('search')
+  async search(@Param('keyWord') keyword: string) {
+    debugger;
+    return this.bookService.search(keyword);
+  }
+
   @Post('create')
   async create(@Body() createBookDto: CreateBookDto) {
     return this.bookService.create(createBookDto);

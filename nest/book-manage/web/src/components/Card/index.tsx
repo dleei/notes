@@ -1,6 +1,15 @@
 import { memo, useState, useEffect } from "react";
 import type { FC, ReactNode } from "react";
-import { Card as AntdCard, Image, Modal, Popconfirm, Form, Input, message } from "antd";
+import {
+  Card as AntdCard,
+  Image,
+  Modal,
+  Popconfirm,
+  Form,
+  Input,
+  message,
+  Upload,
+} from "antd";
 
 import CardWrapper from "./style";
 import type { Book } from "@/types";
@@ -111,12 +120,6 @@ const Card: FC<IProps> = ({ book, onDeleted, onUpdated }) => {
               )}
             </Form.Item>
 
-            {modalState.mode === "detail" && (
-              <Form.Item label="简介" name="description">
-                <div>{description}</div>
-              </Form.Item>
-            )}
-
             <Form.Item label="出版社" name="publisher">
               {modalState.mode === "detail" ? (
                 <div>{publisher}</div>
@@ -124,6 +127,20 @@ const Card: FC<IProps> = ({ book, onDeleted, onUpdated }) => {
                 <Input placeholder="请输入出版社" />
               )}
             </Form.Item>
+
+            {modalState.mode === "detail" && (
+              <Form.Item label="简介" name="description">
+                <div>{description}</div>
+              </Form.Item>
+            )}
+
+            {modalState.mode === "edit" && (
+              <Form.Item label="封面" name="cover">
+                <Upload listType="picture-card">
+                  <div className="ant-upload-text">点击上传</div>
+                </Upload>
+              </Form.Item>
+            )}
           </Form>
         </div>
       </Modal>
