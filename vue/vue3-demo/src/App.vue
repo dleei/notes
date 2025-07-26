@@ -6,13 +6,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, useTemplateRef } from 'vue';
+  import { ref, useTemplateRef } from 'vue'
 
-const title = ref('Hello World');
+  const title = ref('Hello World')
 
-const titleRef = useTemplateRef('titleRef');
+  const titleRef = useTemplateRef('titleRef')
 
-const getNativeDOM = () => {
-  console.log(titleRef.value);
-};
+  const getNativeDOM = () => {
+    console.log(titleRef.value)
+  }
 </script>
