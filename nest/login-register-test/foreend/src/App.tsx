@@ -1,16 +1,21 @@
-import { Button } from "@/components/ui/button"
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Suspense } from 'react';
+import { useRoutes } from 'react-router-dom';
+import routes from './router';
 
-function App() {
 
+const RoutesComponent = () => {
+  return useRoutes(routes); 
+};
+
+const App = () => {
   return (
-    <>
-        <div className="flex items-center justify-center h-screen">
-            <Button className="hover:bg-blue-500 bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Click Me
-            </Button>
-        </div>
-    </>
-  )
-}
+    <Router>
+      <Suspense fallback={<div>Loading...</div>}>
+        <RoutesComponent />
+      </Suspense>
+    </Router>
+  );
+};
 
-export default App
+export default App;

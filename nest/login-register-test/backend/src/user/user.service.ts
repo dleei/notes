@@ -46,6 +46,7 @@ export class UserService {
       return {
         status: 'success',
         token: await token,
+        code: 200,
         data: {
           id: newUser.id,
           username: newUser.username,
@@ -77,6 +78,7 @@ export class UserService {
 
     return {
       status: 'success',
+      code: 200,
       data: {
         id: foundUser.id,
         username: foundUser.username,
